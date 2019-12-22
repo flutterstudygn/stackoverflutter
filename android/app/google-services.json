@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "302304371502",
+    "firebase_url": "https://stackoverflutter-78df8.firebaseio.com",
+    "project_id": "stackoverflutter-78df8",
+    "storage_bucket": "stackoverflutter-78df8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302304371502:android:6c897701a4d9eea13990bf",
+        "android_client_info": {
+          "package_name": "com.fsgn.stackoverflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302304371502-ic54cbvk6vtqqe48mpqi3afrsp1uc6v0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGGwP-kCq9yzW66TdKjumh9sROCUIt0eU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302304371502-ic54cbvk6vtqqe48mpqi3afrsp1uc6v0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
