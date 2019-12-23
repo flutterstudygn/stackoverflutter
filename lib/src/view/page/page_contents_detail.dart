@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
-import 'package:stackoverflutter/src/model/contents/question_item.dart';
 
 import '../global_layout.dart';
 
-class ContentsDetailPage<T extends ContentsItem> extends StatelessWidget {
+class ContentsDetailPage extends StatelessWidget {
+  final ContentsType _contentsType;
   final String itemId;
 
-  const ContentsDetailPage({
+  const ContentsDetailPage(
+    this._contentsType, {
     this.itemId,
     Key key,
   }) : super(key: key);
@@ -25,10 +25,10 @@ class ContentsDetailPage<T extends ContentsItem> extends StatelessWidget {
   }
 
   String _generatePath() {
-    switch (T) {
-      case ArticleItem:
+    switch (_contentsType) {
+      case ContentsType.ARTICLE:
         return '/articles/$itemId';
-      case QuestionItem:
+      case ContentsType.QUESTION:
         return '/questions/$itemId';
     }
     return null;

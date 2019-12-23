@@ -1,5 +1,4 @@
-import 'package:stackoverflutter/src/model/contents/article_item.dart';
-import 'package:stackoverflutter/src/model/contents/question_item.dart';
+import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
 
@@ -20,8 +19,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (_) => HomePage(),
-        '/articles': (_) => ContentsListPage<ArticleItem>(),
-        '/questions': (_) => ContentsListPage<QuestionItem>(),
+        '/articles': (_) => ContentsListPage(ContentsType.ARTICLE),
+        '/questions': (_) => ContentsListPage(ContentsType.QUESTION),
         '/users/signin': (_) => SignInPage(),
       },
       onGenerateRoute: (settings) {
