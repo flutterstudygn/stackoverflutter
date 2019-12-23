@@ -1,20 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:stackoverflutter/src/view/page/page_home.dart';
+import 'package:stackoverflutter/src/view/page/page_not_found.dart';
+import 'package:stackoverflutter/src/view/page/page_signin.dart';
 
 const double CONTENTS_MIN_WIDTH = 700;
 const double CONTENTS_MAX_WIDTH = 800;
 const double MENU_MIN_WIDTH = 200;
 
 class GlobalLayout extends StatelessWidget {
-  final Widget body;
-  final String path;
+  final GlobalKey<NavigatorState> _pageNavigatorKey = GlobalKey();
   final Color backgroundColor;
   final bool showMenu;
 
-  const GlobalLayout({
-    this.body,
-    this.path,
+  GlobalLayout({
     this.backgroundColor,
     this.showMenu = true,
     Key key,
@@ -35,16 +35,15 @@ class GlobalLayout extends StatelessWidget {
             ? max(MENU_MIN_WIDTH, (displayWidth - CONTENTS_MAX_WIDTH) / 2)
             : MENU_MIN_WIDTH;
 
-    final showSignInButton = (path != '/users/signin') || false;
+//    final showSignInButton = (path != '/users/signin') || false;
 
     return Scaffold(
       backgroundColor:
           backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: InkWell(
-          onTap: () {
-            Navigator.of(context).pushNamed('/');
-          },
+          onTap: () =>
+              Navigator.of(context).pushReplacementNamed(HomePage.routeName),
           child: Image.asset(
             'assets/images/logo.png',
             width: 120.0,
@@ -53,15 +52,14 @@ class GlobalLayout extends StatelessWidget {
         elevation: 0.25,
         automaticallyImplyLeading: isMobile,
         actions: <Widget>[
-          if (showSignInButton)
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/users/signin');
-              },
-              child: Text(
-                'Sign In',
-              ),
+//          if (showSignInButton)
+          FlatButton(
+            onPressed: () => _pageNavigatorKey.currentState
+                .pushReplacementNamed(SignInPage.routeName),
+            child: Text(
+              'Sign In',
             ),
+          ),
         ],
       ),
       drawer: showMenu && isMobile
@@ -95,7 +93,30 @@ class GlobalLayout extends StatelessWidget {
                 minWidth: contentsMinWidth,
                 maxWidth: CONTENTS_MIN_WIDTH,
               ),
-              child: body,
+              child: Navigator(
+                key: _pageNavigatorKey,
+                initialRoute: HomePage.routeName,
+                onGenerateRoute: (settings) {
+                  WidgetBuilder builder;
+
+                  switch (settings.name) {
+                    case HomePage.routeName:
+                      builder = (_) => HomePage();
+                      break;
+                    case SignInPage.routeName:
+                      builder = (_) => SignInPage();
+                      break;
+                    default:
+                      builder = (_) => NotFoundPage();
+                      break;
+                  }
+
+                  return NoTransitionMaterialPageRoute(
+                    builder: builder,
+                    settings: settings,
+                  );
+                },
+              ),
             ),
           ),
           if (hasSideExtra)
@@ -113,7 +134,7 @@ class GlobalLayout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        _buildMenuItem(context, 'Home', path: '/', isSelected: path == '/'),
+        _buildMenuItem(context, 'Home', path: HomePage.routeName),
         _buildMenuItem(context, 'Articles', path: '/articles'),
         _buildMenuItem(context, 'Questions', path: '/questions'),
         _buildMenuItem(context, 'Users', path: '/users'),
@@ -126,17 +147,17 @@ class GlobalLayout extends StatelessWidget {
     BuildContext context,
     String text, {
     String path,
-    bool isSelected,
+    bool isSelected = false,
   }) {
     return InkWell(
       onTap: () {
         if (path?.isNotEmpty == true) {
-          Navigator.of(context).pushNamed(path);
+          _pageNavigatorKey.currentState.pushReplacementNamed(path);
         }
       },
       child: Container(
         width: double.infinity,
-        color: isSelected ?? this.path.startsWith(path)
+        color: isSelected /*?? this.path.startsWith(path)*/
             ? Color(0xffd0d0d0)
             : Colors.transparent,
         child: Padding(
@@ -151,4 +172,23 @@ class GlobalLayout extends StatelessWidget {
       ),
     );
   }
+}
+
+class NoTransitionMaterialPageRoute extends MaterialPageRoute {
+  NoTransitionMaterialPageRoute({
+    WidgetBuilder builder,
+    RouteSettings settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+  }) : super(
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          builder: builder,
+          settings: settings,
+        );
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation, Widget child) =>
+      child;
 }

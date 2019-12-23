@@ -15,12 +15,9 @@ class ContentsDetailPage<T extends ContentsItem> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlobalLayout(
-      path: _generatePath(),
-      body: Padding(
+    return Padding(
         padding: const EdgeInsets.all(18.0),
         child: Container(),
-      ),
     );
   }
 

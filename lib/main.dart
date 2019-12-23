@@ -1,5 +1,6 @@
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
+import 'package:stackoverflutter/src/view/global_layout.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
 
@@ -17,12 +18,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'stackoverFlutter',
       theme: ThemeData.light(),
-      initialRoute: '/',
+      initialRoute: HomePage.routeName,
       routes: {
-        '/': (_) => HomePage(),
+        HomePage.routeName: (_) => GlobalLayout(),
         '/articles': (_) => ContentsListPage<ArticleItem>(),
         '/questions': (_) => ContentsListPage<QuestionItem>(),
-        '/users/signin': (_) => SignInPage(),
+        SignInPage.routeName: (_) => SignInPage(),
       },
       onGenerateRoute: (settings) {
         return PageTransition(

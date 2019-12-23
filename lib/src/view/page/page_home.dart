@@ -1,14 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 
-import '../global_layout.dart';
-import 'package:flutter/material.dart';
-
 class HomePage extends StatelessWidget {
+  static const String routeName = '/';
+
   @override
   Widget build(BuildContext context) {
-    return GlobalLayout(
-      path: '/',
-      body: SingleChildScrollView(
+    return SingleChildScrollView(
         child: Column(
           children: <Widget>[
             Padding(
@@ -41,7 +39,6 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 

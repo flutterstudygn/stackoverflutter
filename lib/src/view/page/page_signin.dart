@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../global_layout.dart';
-
 class SignInPage extends StatelessWidget {
+  static const String routeName = '/users/signin';
+
   @override
   Widget build(BuildContext context) {
-    return GlobalLayout(
-      path: '/users/signin',
-      body: Center(
-        child: Text('Sign In'),
-      ),
+    return Center(
+      child: Text('Sign In'),
     );
   }
 }
