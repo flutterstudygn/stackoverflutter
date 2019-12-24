@@ -7,12 +7,18 @@ class QuestionItem extends ContentsItem {
     String title,
     String contents,
     DateTime createTime,
+    int viewCount,
+    int commentCount,
+    int likeCount,
   }) : super(
           id: id,
           userId: userId,
           title: title,
           contents: contents,
           createTime: createTime,
+          viewCount: viewCount,
+          commentCount: commentCount,
+          likeCount: likeCount,
         );
 
   factory QuestionItem.fromJson(Map<String, dynamic> json) {

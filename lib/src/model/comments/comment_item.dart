@@ -11,6 +11,8 @@ class CommentItem {
   String contents;
   DateTime createTime;
   ContentsType contentsType;
+  @JsonKey(defaultValue: 0)
+  int likeCount;
 
   @JsonKey(ignore: true)
   bool get markdownEnabled => contentsType == ContentsType.QUESTION;
@@ -21,6 +23,7 @@ class CommentItem {
     this.contentsId,
     this.contents,
     this.createTime,
+    this.likeCount,
   });
 
   factory CommentItem.fromJson(Map<String, dynamic> json) =>
