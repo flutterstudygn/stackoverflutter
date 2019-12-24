@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
                     title: 'Articles',
                     sideWidget: _buildShowMore(
                       context,
-                      path: '/questions',
+                      path: '/articles',
                     ),
                   ),
                 ],

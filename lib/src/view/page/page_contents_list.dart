@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
-import 'package:stackoverflutter/src/model/contents/question_item.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 import 'package:stackoverflutter/src/view/global_layout.dart';
 
-class ContentsListPage<T extends ContentsItem> extends StatelessWidget {
+class ContentsListPage extends StatelessWidget {
+  final ContentsType _contentsType;
+  ContentsListPage(this._contentsType);
+
   @override
   Widget build(BuildContext context) {
     return GlobalLayout(
@@ -24,20 +25,20 @@ class ContentsListPage<T extends ContentsItem> extends StatelessWidget {
   }
 
   String _generatePath() {
-    switch (T) {
-      case ArticleItem:
+    switch (_contentsType) {
+      case ContentsType.ARTICLE:
         return '/articles';
-      case QuestionItem:
+      case ContentsType.QUESTION:
         return '/questions';
     }
     return null;
   }
 
   String _generateTitle() {
-    switch (T) {
-      case ArticleItem:
+    switch (_contentsType) {
+      case ContentsType.ARTICLE:
         return 'Articles';
-      case QuestionItem:
+      case ContentsType.QUESTION:
         return 'Questions';
     }
     return null;

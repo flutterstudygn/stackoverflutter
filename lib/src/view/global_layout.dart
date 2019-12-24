@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -37,6 +38,13 @@ class GlobalLayout extends StatelessWidget {
 
     final showSignInButton = (path != '/users/signin') || false;
 
+    var drawerPadding = 0.0;
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        drawerPadding = 24.0;
+      }
+    } catch (_) {}
+
     return Scaffold(
       backgroundColor:
           backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
@@ -67,7 +75,10 @@ class GlobalLayout extends StatelessWidget {
       drawer: showMenu && isMobile
           ? Drawer(
               elevation: 5.0,
-              child: _buildMenuLayout(context),
+              child: Padding(
+                padding: EdgeInsets.only(top: drawerPadding),
+                child: _buildMenuLayout(context),
+              ),
             )
           : null,
       body: Row(
@@ -136,7 +147,7 @@ class GlobalLayout extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        color: isSelected ?? this.path.startsWith(path)
+        color: isSelected ?? this.path?.startsWith(path) == true
             ? Color(0xffd0d0d0)
             : Colors.transparent,
         child: Padding(
