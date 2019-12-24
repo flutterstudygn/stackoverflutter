@@ -22,3 +22,12 @@ jobs:
         args: deploy --only hosting
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_CI_TOKEN }}
+        
+    - name: Slack Notification
+      uses: 8398a7/action-slack@v2
+      with:
+        status: ${{ job.status }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always()
