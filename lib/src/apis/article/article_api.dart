@@ -1,3 +1,4 @@
+import 'package:firebase/firebase.dart';
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 
 class ArticleApi {
@@ -14,16 +15,19 @@ class ArticleApi {
     int count = 30,
     int offset = 0,
   }) async {
-    return Future.delayed(
-      Duration(milliseconds: 1000),
-      () => [
-        ArticleItem(id: 'abc'),
-        ArticleItem(id: 'def'),
-        ArticleItem(id: 'ghd'),
-        ArticleItem(id: 'hij'),
-        ArticleItem(id: 'klm'),
-      ],
-    );
+    return firestore()
+        .collection('articles')
+        .orderBy('createTime')
+        .limit(count)
+        .get()
+        .then((v) {
+      List<ArticleItem> list = List();
+      v.docs.forEach((e) {
+        var item = ArticleItem.fromJson(e.data());
+        list.add(item..id = e.id);
+      });
+      return list;
+    });
   }
 
   Future<List<ArticleItem>> readArticlesByUser(

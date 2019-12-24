@@ -10,6 +10,7 @@ class ContentsItem {
   String userId;
   String title;
   String contents;
+  @JsonKey(fromJson: parseDateTime, toJson: fromDateTime)
   DateTime createTime;
   @JsonKey(defaultValue: 0)
   int viewCount;
@@ -37,4 +38,17 @@ class ContentsItem {
   ContentsItem clone() {
     return ContentsItem.fromJson(this.toJson());
   }
+
+  @override
+  String toString() {
+    return 'ContentsItem{id: $id, userId: $userId, title: $title, contents: $contents, createTime: $createTime, viewCount: $viewCount, commentCount: $commentCount, likeCount: $likeCount}';
+  }
+}
+
+fromDateTime(DateTime value) {
+  return value;
+}
+
+parseDateTime(DateTime value) {
+  return value?.toLocal();
 }

@@ -21,8 +21,20 @@ class ArticleItem extends ContentsItem {
           likeCount: likeCount,
         );
 
+  factory ArticleItem.fromContents(ContentsItem contents) {
+    return ArticleItem(
+      id: contents?.id,
+      userId: contents?.userId,
+      title: contents?.title,
+      contents: contents?.contents,
+      createTime: contents?.createTime,
+      viewCount: contents?.viewCount,
+      commentCount: contents?.commentCount,
+      likeCount: contents?.likeCount,
+    );
+  }
   factory ArticleItem.fromJson(Map<String, dynamic> json) {
-    return ContentsItem.fromJson(json) as ArticleItem;
+    return ArticleItem.fromContents(ContentsItem.fromJson(json));
   }
 
   Map<String, dynamic> toJson() => super.toJson();
