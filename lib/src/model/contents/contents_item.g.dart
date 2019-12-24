@@ -15,6 +15,9 @@ ContentsItem _$ContentsItemFromJson(Map<String, dynamic> json) {
     createTime: json['createTime'] == null
         ? null
         : DateTime.parse(json['createTime'] as String),
+    viewCount: json['viewCount'] as int ?? 0,
+    commentCount: json['commentCount'] as int ?? 0,
+    likeCount: json['likeCount'] as int ?? 0,
   );
 }
 
@@ -25,4 +28,7 @@ Map<String, dynamic> _$ContentsItemToJson(ContentsItem instance) =>
       'title': instance.title,
       'contents': instance.contents,
       'createTime': instance.createTime?.toIso8601String(),
+      'viewCount': instance.viewCount,
+      'commentCount': instance.commentCount,
+      'likeCount': instance.likeCount,
     };

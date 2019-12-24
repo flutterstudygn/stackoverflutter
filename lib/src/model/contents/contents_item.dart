@@ -11,6 +11,12 @@ class ContentsItem {
   String title;
   String contents;
   DateTime createTime;
+  @JsonKey(defaultValue: 0)
+  int viewCount;
+  @JsonKey(defaultValue: 0)
+  int commentCount;
+  @JsonKey(defaultValue: 0)
+  int likeCount;
 
   ContentsItem({
     this.id,
@@ -18,6 +24,9 @@ class ContentsItem {
     this.title,
     this.contents,
     this.createTime,
+    this.viewCount,
+    this.commentCount,
+    this.likeCount,
   });
 
   factory ContentsItem.fromJson(Map<String, dynamic> json) =>

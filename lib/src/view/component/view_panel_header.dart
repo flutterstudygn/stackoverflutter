@@ -27,8 +27,10 @@ class PanelHeaderView extends StatelessWidget {
             sideWidget ?? Container(),
           ],
         ),
+        SizedBox(height: 8.0),
         Divider(
           thickness: 3.0,
+          height: 0.0,
           color: Theme.of(context).textTheme.title.color,
         ),
       ],

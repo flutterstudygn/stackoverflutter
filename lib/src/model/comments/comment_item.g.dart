@@ -15,7 +15,9 @@ CommentItem _$CommentItemFromJson(Map<String, dynamic> json) {
     createTime: json['createTime'] == null
         ? null
         : DateTime.parse(json['createTime'] as String),
-  );
+    likeCount: json['likeCount'] as int ?? 0,
+  )..contentsType =
+      _$enumDecodeNullable(_$ContentsTypeEnumMap, json['contentsType']);
 }
 
 Map<String, dynamic> _$CommentItemToJson(CommentItem instance) =>
@@ -25,4 +27,43 @@ Map<String, dynamic> _$CommentItemToJson(CommentItem instance) =>
       'contentsId': instance.contentsId,
       'contents': instance.contents,
       'createTime': instance.createTime?.toIso8601String(),
+      'contentsType': _$ContentsTypeEnumMap[instance.contentsType],
+      'likeCount': instance.likeCount,
     };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$ContentsTypeEnumMap = {
+  ContentsType.ARTICLE: 'ARTICLE',
+  ContentsType.QUESTION: 'QUESTION',
+};
