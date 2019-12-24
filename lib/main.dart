@@ -57,7 +57,6 @@ class MyApp extends StatelessWidget {
       settings: RouteSettings(
         name: settings.name,
         arguments: settings.arguments,
-        isInitialRoute: true,
       ),
       type: PageTransitionType.fade,
     );
