@@ -13,6 +13,23 @@ class ArticleApi {
   Future<List<ArticleItem>> readArticles({
     int count = 30,
     int offset = 0,
+  }) async {
+    return Future.delayed(
+      Duration(milliseconds: 1000),
+      () => [
+        ArticleItem(id: 'abc'),
+        ArticleItem(id: 'def'),
+        ArticleItem(id: 'ghd'),
+        ArticleItem(id: 'hij'),
+        ArticleItem(id: 'klm'),
+      ],
+    );
+  }
+
+  Future<List<ArticleItem>> readArticlesByUser(
+    String userId, {
+    int count = 30,
+    int offset = 0,
   }) {
     return null;
   }
