@@ -13,8 +13,8 @@ class UserApi {
   }
 
   Future<UserItem> readUserByUid(String uid) {
-    return firestore().collection('users').doc('uid').get().then((v) {
-      if (v.data() != null) {
+    return firestore().collection('users').doc(uid).get().then((v) {
+      if (v.exists) {
         return UserItem.fromJson(v.data())..id = v.id;
       }
       return null;

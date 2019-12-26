@@ -39,10 +39,6 @@ class GlobalLayout extends StatelessWidget {
             ? max(MENU_MIN_WIDTH, (displayWidth - CONTENTS_MAX_WIDTH) / 2)
             : MENU_MIN_WIDTH;
 
-    final showSignInButton = (path != '/users/signin');
-    bool isSignedIn =
-        Provider.of<SessionBloc>(context, listen: false).currentUser != null;
-
     var drawerPadding = 0.0;
     try {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -66,19 +62,51 @@ class GlobalLayout extends StatelessWidget {
         elevation: 0.25,
         automaticallyImplyLeading: isMobile,
         actions: <Widget>[
-          if (showSignInButton)
-            FlatButton(
-              onPressed: () {
-                if (isSignedIn) {
-                  Provider.of<SessionBloc>(context).signOut();
-                } else {
-                  Navigator.of(context).pushNamed('/users/signin');
-                }
-              },
-              child: Text(
-                isSignedIn ? 'Sign Out' : 'Sign In',
-              ),
-            )
+          Consumer<SessionBloc>(
+            builder: (_, sessionBloc, __) {
+              if (sessionBloc.isSignedIn) {
+                return PopupMenuButton(
+                  icon: Icon(Icons.account_circle),
+                  onSelected: (v) async {
+                    switch (v) {
+                      case 'profile':
+                        if (sessionBloc.currentUser?.id != null) {
+                          Navigator.of(context).pushNamed(
+                            '/users?id=${sessionBloc.currentUser.id}',
+                            arguments: sessionBloc.currentUser,
+                          );
+                        }
+                        break;
+                      case 'signout':
+                        await sessionBloc.signOut();
+                        Navigator.of(context).pushNamed('/');
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        value: 'profile',
+                        child: Text('Profile'),
+                      ),
+                      PopupMenuItem(
+                        value: 'signout',
+                        child: Text('Sign out'),
+                      ),
+                    ];
+                  },
+                );
+              } else if (path != '/users/signin') {
+                return FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/users/signin');
+                  },
+                  child: Text('Sign In'),
+                );
+              }
+              return Container();
+            },
+          ),
         ],
       ),
       drawer: showMenu && isMobile
