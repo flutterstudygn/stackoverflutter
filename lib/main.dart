@@ -5,6 +5,7 @@ import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
+import 'package:stackoverflutter/src/view/page/page_user_detail.dart';
 
 import './src/view/page/page_home.dart';
 import './src/view/page/page_signin.dart';
@@ -33,6 +34,12 @@ class MyApp extends StatelessWidget {
             case '/users/signin':
               return route(SignInPage(), settings);
             default:
+              if (settings.name.startsWith('/users?id=')) {
+                return route(
+                  UserDetailPage(settings.arguments),
+                  settings,
+                );
+              }
               if (settings.name.startsWith('/articles?id=')) {
                 return route(
                   ContentsDetailPage(ContentsType.ARTICLE, itemId: '1'),

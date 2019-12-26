@@ -14,6 +14,7 @@ class SessionBloc extends ChangeNotifier {
   final SignInManager _signInManager = SignInManager();
   UserItem _currentUser;
 
+  bool get isSignedIn => _currentUser != null;
   UserItem get currentUser => _currentUser;
   set currentUser(UserItem value) {
     _currentUser = value;
@@ -34,14 +35,16 @@ class SessionBloc extends ChangeNotifier {
         break;
     }
     if (firebaseUser != null) {
-      return UserApi.instance.readUserByUid(firebaseUser.uid).then((v) {
-        if (v == null) {
-          return _createUser(firebaseUser);
-        }
-        return v;
-      }).catchError((_) {
-        return _createUser(firebaseUser);
-      });
+      UserItem signInResult;
+      try {
+        signInResult = await UserApi.instance.readUserByUid(firebaseUser.uid);
+      } catch (_) {}
+
+      if (signInResult != null) {
+        currentUser = signInResult;
+      } else {
+        currentUser = await _createUser(firebaseUser);
+      }
     }
     return _currentUser;
   }
@@ -49,7 +52,7 @@ class SessionBloc extends ChangeNotifier {
   Future<UserItem> _createUser(User firebaseUser) async {
     currentUser =
         await UserApi.instance.createUser(UserItem.firebaseUser(firebaseUser));
-    return currentUser;
+    return _currentUser;
   }
 
   Future<void> signOut() async {
