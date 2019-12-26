@@ -12,6 +12,7 @@ UserItem _$UserItemFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     description: json['description'] as String,
     imageUrl: json['imageUrl'] as String,
+    email: json['email'] as String,
   );
 }
 
@@ -20,4 +21,5 @@ Map<String, dynamic> _$UserItemToJson(UserItem instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
       'imageUrl': instance.imageUrl,
+      'email': instance.email,
     };
