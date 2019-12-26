@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/home_bloc.dart';
+import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 
 const double CONTENTS_MIN_WIDTH = 700;
@@ -37,7 +39,9 @@ class GlobalLayout extends StatelessWidget {
             ? max(MENU_MIN_WIDTH, (displayWidth - CONTENTS_MAX_WIDTH) / 2)
             : MENU_MIN_WIDTH;
 
-    final showSignInButton = (path != '/users/signin') || false;
+    final showSignInButton = (path != '/users/signin');
+    bool isSignedIn =
+        Provider.of<SessionBloc>(context, listen: false).currentUser != null;
 
     var drawerPadding = 0.0;
     try {
@@ -65,12 +69,16 @@ class GlobalLayout extends StatelessWidget {
           if (showSignInButton)
             FlatButton(
               onPressed: () {
-                Navigator.of(context).pushNamed('/users/signin');
+                if (isSignedIn) {
+                  Provider.of<SessionBloc>(context).signOut();
+                } else {
+                  Navigator.of(context).pushNamed('/users/signin');
+                }
               },
               child: Text(
-                'Sign In',
+                isSignedIn ? 'Sign Out' : 'Sign In',
               ),
-            ),
+            )
         ],
       ),
       drawer: showMenu && isMobile
