@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:stackoverflutter/src/util/query_builder.dart';
+import 'package:stackoverflutter/src/util/router.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_home.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
 import 'package:stackoverflutter/src/view/page/page_signin.dart';
@@ -94,6 +97,7 @@ class GlobalLayout extends StatelessWidget {
                   ),
           Expanded(
             child: Container(
+              padding: EdgeInsets.all(18),
               constraints: BoxConstraints(
                 minWidth: contentsMinWidth,
                 maxWidth: CONTENTS_MIN_WIDTH,
@@ -104,6 +108,16 @@ class GlobalLayout extends StatelessWidget {
                 onGenerateRoute: (settings) {
                   WidgetBuilder builder;
 
+                  Map<String, String> queryObject;
+
+                  if (settings.name.contains('?')) {
+                    String query = settings.name.split('?').last;
+                    queryObject = QueryBuilder.decode(query);
+
+//                    print(queryObject);
+//                    print(QueryBuilder.encode(queryObject));
+                  }
+
                   switch (settings.name) {
                     case HomePage.routeName:
                       builder = (_) => HomePage();
@@ -111,12 +125,22 @@ class GlobalLayout extends StatelessWidget {
                     case SignInPage.routeName:
                       builder = (_) => SignInPage();
                       break;
+                    case ContentsListPage.routeNameArticles:
+                      builder = (_) => ContentsListPage.articles(
+                            queryObject: queryObject,
+                          );
+                      break;
+                    case ContentsListPage.routeNameQuestions:
+                      builder = (_) => ContentsListPage.questions(
+                            queryObject: queryObject,
+                          );
+                      break;
                     default:
                       builder = (_) => NotFoundPage();
                       break;
                   }
 
-                  return NoTransitionMaterialPageRoute(
+                  return NoTransitionRoute(
                     builder: builder,
                     settings: settings,
                   );
@@ -177,23 +201,4 @@ class GlobalLayout extends StatelessWidget {
       ),
     );
   }
-}
-
-class NoTransitionMaterialPageRoute extends MaterialPageRoute {
-  NoTransitionMaterialPageRoute({
-    WidgetBuilder builder,
-    RouteSettings settings,
-    bool maintainState = true,
-    bool fullscreenDialog = false,
-  }) : super(
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-          builder: builder,
-          settings: settings,
-        );
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-          Animation<double> secondaryAnimation, Widget child) =>
-      child;
 }
