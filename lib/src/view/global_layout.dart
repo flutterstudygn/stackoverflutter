@@ -14,7 +14,12 @@ class GlobalLayout extends StatelessWidget {
   final Color backgroundColor;
   final bool showMenu;
 
+  /// Root navigator에 인한 라우팅시(i.e. 주소창에 직접 입력하는 경우) 하위
+  /// Navigator에 사용될 route명.
+  final String initialRoute;
+
   GlobalLayout({
+    this.initialRoute = Navigator.defaultRouteName,
     this.backgroundColor,
     this.showMenu = true,
     Key key,
@@ -95,7 +100,7 @@ class GlobalLayout extends StatelessWidget {
               ),
               child: Navigator(
                 key: _pageNavigatorKey,
-                initialRoute: HomePage.routeName,
+                initialRoute: initialRoute,
                 onGenerateRoute: (settings) {
                   WidgetBuilder builder;
 
