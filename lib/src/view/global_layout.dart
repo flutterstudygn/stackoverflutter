@@ -66,36 +66,59 @@ class GlobalLayout extends StatelessWidget {
           Consumer<SessionBloc>(
             builder: (_, sessionBloc, __) {
               if (sessionBloc.isSignedIn) {
-                return PopupMenuButton(
-                  icon: Icon(Icons.account_circle),
-                  onSelected: (v) async {
-                    switch (v) {
-                      case 'profile':
-                        if (sessionBloc.currentUser?.id != null) {
-                          Navigator.of(context).pushNamed(
-                            UsersPage.routeName,
-                            arguments: sessionBloc.currentUser,
-                          );
-                        }
-                        break;
-                      case 'signout':
-                        await sessionBloc.signOut();
-                        Navigator.of(context).pushNamed('/');
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        value: 'profile',
-                        child: Text('Profile'),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: PopupMenuButton(
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircleAvatar(
+                        child: ClipRRect(
+                          child: (sessionBloc
+                                      .currentUser?.imageUrl?.isNotEmpty ==
+                                  true)
+                              ? FadeInImage(
+                                  image: NetworkImage(
+                                      sessionBloc.currentUser.imageUrl),
+                                  placeholder: AssetImage(
+                                      'assets/images/account_circle.png'),
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset('assets/images/account_circle.png'),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(180.0)),
+                        ),
                       ),
-                      PopupMenuItem(
-                        value: 'signout',
-                        child: Text('Sign out'),
-                      ),
-                    ];
-                  },
+                    ),
+                    onSelected: (v) async {
+                      switch (v) {
+                        case 'profile':
+                          if (sessionBloc.currentUser?.id != null) {
+                            Navigator.of(context).pushNamed(
+                              UsersPage.routeName,
+                              arguments: sessionBloc.currentUser,
+                            );
+                          }
+                          break;
+                        case 'signout':
+                          await sessionBloc.signOut();
+                          Navigator.of(context).pushNamed('/');
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 'profile',
+                          child: Text('Profile'),
+                        ),
+                        PopupMenuItem(
+                          value: 'signout',
+                          child: Text('Sign out'),
+                        ),
+                      ];
+                    },
+                  ),
                 );
               } else if (path != '/users/signin') {
                 return FlatButton(
