@@ -31,6 +31,10 @@ class SignInManager {
     return userCredential?.user;
   }
 
+  fb.User currentFirebaseUser() {
+    return _auth.currentUser;
+  }
+
   Future signOut() async {
     await _auth.signOut();
   }
