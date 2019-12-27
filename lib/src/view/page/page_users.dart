@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../global_layout.dart';
 
+const double _activityBarHeight = 50.0;
+
 class UsersPage extends StatelessWidget {
   final List<Widget> contents = [
     _UsersCard(),
-    _UserActivity(),
+    SizedBox(
+      height: _activityBarHeight,
+      child: _UserActivity(),
+    ),
   ];
 
   @override
@@ -87,12 +92,12 @@ class _UserActivity extends StatelessWidget {
           children: <Widget>[
             Text(
               activity,
-              style: Theme.of(context).textTheme.title,
+              style: Theme.of(context).textTheme.subtitle,
             ),
             SizedBox(height: 8),
             Text(
               count.toString(),
-              style: Theme.of(context).textTheme.subtitle,
+              style: Theme.of(context).textTheme.title,
             )
           ],
         ),
@@ -104,12 +109,12 @@ class _UserActivity extends StatelessWidget {
         i,
         VerticalDivider(
           color: Colors.grey,
-          thickness: 5,
+          indent: _activityBarHeight / 8,
+          endIndent: _activityBarHeight / 8,
+          thickness: 2,
         ),
       );
     }
-
-    print(children.length);
 
     return Row(children: children);
   }
