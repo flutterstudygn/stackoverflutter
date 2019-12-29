@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/home_bloc.dart';
 import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/view/page/page_users.dart';
 
 const double CONTENTS_MIN_WIDTH = 700;
 const double CONTENTS_MAX_WIDTH = 800;
@@ -72,7 +73,7 @@ class GlobalLayout extends StatelessWidget {
                       case 'profile':
                         if (sessionBloc.currentUser?.id != null) {
                           Navigator.of(context).pushNamed(
-                            '/users?id=${sessionBloc.currentUser.id}',
+                            UsersPage.routeName,
                             arguments: sessionBloc.currentUser,
                           );
                         }
@@ -138,12 +139,12 @@ class GlobalLayout extends StatelessWidget {
                     width: menuWidth,
                   ),
           Expanded(
-            child: Container(
-              constraints: BoxConstraints(
-                minWidth: contentsMinWidth,
-                maxWidth: CONTENTS_MIN_WIDTH,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Container(
+                constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
+                child: body,
               ),
-              child: body,
             ),
           ),
           if (hasSideExtra)
@@ -160,7 +161,6 @@ class GlobalLayout extends StatelessWidget {
         _buildMenuItem(context, 'Home', path: '/', isSelected: path == '/'),
         _buildMenuItem(context, 'Articles', path: '/articles'),
         _buildMenuItem(context, 'Questions', path: '/questions'),
-        _buildMenuItem(context, 'Users', path: '/users'),
         _buildMenuItem(context, 'About', path: '/about'),
       ],
     );

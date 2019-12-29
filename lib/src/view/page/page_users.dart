@@ -1,32 +1,72 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stackoverflutter/src/apis/user/user_api.dart';
+import 'package:stackoverflutter/src/bloc/session_bloc.dart';
+import 'package:stackoverflutter/src/model/user/user_item.dart';
 
 import '../global_layout.dart';
 
 const double _activityBarHeight = 50.0;
+const double _userCardHeight = 120.0;
 
 class UsersPage extends StatelessWidget {
-  final List<Widget> contents = [
-    _UsersCard(),
-    SizedBox(
-      height: _activityBarHeight,
-      child: _UserActivity(),
-    ),
-  ];
+  static const String routeName = '/users';
+
+  final Future<UserItem> _getUser;
+
+  UsersPage({Map<String, String> query})
+      : _getUser = query == null
+            ? null
+            : Future(() => UserApi.instance.readUserByUid(query['uid']));
 
   @override
   Widget build(BuildContext context) {
     return GlobalLayout(
       path: '/users',
-      body: ListView.separated(
-        itemCount: contents.length,
-        separatorBuilder: (_, __) => SizedBox(height: 16),
-        itemBuilder: (_, i) => contents[i],
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: FutureBuilder<UserItem>(
+          future: _getUser ??
+              Future.value(
+                Provider.of<SessionBloc>(context).currentUser ??
+                    Future.error(
+                      Exception('Current user doesn\'t exist'),
+                    ),
+              ),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return Text(snapshot.error.toString());
+
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: _userCardHeight,
+                    child: _UsersCard(snapshot.data.name),
+                  ),
+                  SizedBox(height: 16),
+                  SizedBox(
+                    height: _activityBarHeight,
+                    child: _UserActivity(),
+                  ),
+                  SizedBox(height: 16),
+                  // todo: user's show articles & questions.
+                ],
+              );
+            }
+
+            return Text('loading');
+          },
+        ),
       ),
     );
   }
 }
 
 class _UsersCard extends StatelessWidget {
+  final String _userName;
+
+  const _UsersCard(this._userName, {Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -50,10 +90,11 @@ class _UsersCard extends StatelessWidget {
           width: 20,
         ),
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'User Name',
+              _userName,
               style: Theme.of(context).textTheme.display1,
             ),
             FlatButton(
@@ -98,7 +139,7 @@ class _UserActivity extends StatelessWidget {
             Text(
               count.toString(),
               style: Theme.of(context).textTheme.title,
-            )
+            ),
           ],
         ),
       );

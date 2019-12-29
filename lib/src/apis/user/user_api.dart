@@ -1,26 +1,27 @@
 import 'package:firebase/firebase.dart';
+import 'package:firebase/firestore.dart';
 import 'package:stackoverflutter/src/model/user/user_item.dart';
 
 class UserApi {
   UserApi._() : super();
   static UserApi _instance;
 
-  static UserApi get instance {
-    if (_instance == null) {
-      _instance = UserApi._();
-    }
-    return _instance;
-  }
+  static UserApi get instance => _instance ??= UserApi._();
 
-  Future<UserItem> readUserByUid(String uid) {
-    return firestore().collection('users').doc(uid).get().then((v) {
-      if (v.exists) {
-        return UserItem.fromJson(v.data())..id = v.id;
-      }
-      return null;
-    }).catchError((_) {
-      return null;
-    });
+  Future<UserItem> readUserByUid(String uid) async {
+    DocumentSnapshot snapshot;
+
+    try {
+      snapshot = await firestore().collection('users').doc(uid).get();
+    } catch (_) {
+      rethrow;
+    }
+
+    if (snapshot.exists) {
+      return UserItem.fromJson(snapshot.data())..id = snapshot.id;
+    } else {
+      throw Exception('Firestore snapshot for user id = $uid doesn\'t exists.');
+    }
   }
 
   Future<UserItem> createUser(UserItem userItem) {
