@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/session_bloc.dart';
@@ -6,10 +7,11 @@ import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
 import 'package:stackoverflutter/src/view/page/page_user_detail.dart';
+import 'package:stackoverflutter/src/view/page/page_users.dart';
+import 'package:stackoverflutter/src/view/page/page_users_edit.dart';
 
 import './src/view/page/page_home.dart';
 import './src/view/page/page_signin.dart';
-import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,6 +35,10 @@ class MyApp extends StatelessWidget {
               return route(ContentsListPage(ContentsType.QUESTION), settings);
             case '/users/signin':
               return route(SignInPage(), settings);
+            case '/users':
+              return route(UsersPage(), settings);
+            case '/users/edit':
+              return route(UsersEditPage(), settings);
             default:
               if (settings.name.startsWith('/users?id=')) {
                 return route(
