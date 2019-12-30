@@ -8,6 +8,8 @@ import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/view/page/page_users.dart';
 
+import 'component/view_user_profile.dart';
+
 const double CONTENTS_MIN_WIDTH = 700;
 const double CONTENTS_MAX_WIDTH = 800;
 const double MENU_MIN_WIDTH = 200;
@@ -69,27 +71,7 @@ class GlobalLayout extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: 10.0),
                   child: PopupMenuButton(
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircleAvatar(
-                        child: ClipRRect(
-                          child: (sessionBloc
-                                      .currentUser?.imageUrl?.isNotEmpty ==
-                                  true)
-                              ? FadeInImage(
-                                  image: NetworkImage(
-                                      sessionBloc.currentUser.imageUrl),
-                                  placeholder: AssetImage(
-                                      'assets/images/account_circle.png'),
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.asset('assets/images/account_circle.png'),
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(180.0)),
-                        ),
-                      ),
-                    ),
+                    child: UserProfileView(sessionBloc.currentUser),
                     onSelected: (v) async {
                       switch (v) {
                         case 'profile':
