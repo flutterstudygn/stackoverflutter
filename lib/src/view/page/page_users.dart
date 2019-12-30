@@ -22,7 +22,7 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlobalLayout(
-      path: '/users',
+      path: UsersPage.routeName,
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: FutureBuilder<UserItem>(
@@ -41,7 +41,7 @@ class UsersPage extends StatelessWidget {
                 children: <Widget>[
                   SizedBox(
                     height: _userCardHeight,
-                    child: _UsersCard(snapshot.data.name),
+                    child: _UsersCard(snapshot.data),
                   ),
                   SizedBox(height: 16),
                   SizedBox(
@@ -63,27 +63,31 @@ class UsersPage extends StatelessWidget {
 }
 
 class _UsersCard extends StatelessWidget {
-  final String _userName;
+  static const double _avatarSize = 100;
+  final UserItem _userItem;
 
-  const _UsersCard(this._userName, {Key key}) : super(key: key);
+  const _UsersCard(this._userItem, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        Container(
-          child: Icon(
-            Icons.person,
-            size: 100,
-            color: Colors.grey,
-          ),
-          decoration: ShapeDecoration(
-            shape: CircleBorder(
-              side: BorderSide(
-                color: Colors.grey,
-                width: 3,
+        SizedBox(
+          width: _avatarSize,
+          height: _avatarSize,
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: CircularProgressIndicator(),
               ),
-            ),
+              CircleAvatar(
+                foregroundColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                backgroundImage: Image.network(_userItem.imageUrl).image,
+              ),
+            ],
           ),
         ),
         SizedBox(
@@ -94,7 +98,7 @@ class _UsersCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              _userName,
+              _userItem.name,
               style: Theme.of(context).textTheme.display1,
             ),
             FlatButton(
