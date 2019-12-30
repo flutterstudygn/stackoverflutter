@@ -12,8 +12,17 @@ enum SignInProvider {
 
 class SessionBloc extends ChangeNotifier {
   final SignInManager _signInManager = SignInManager();
-  UserItem _currentUser;
 
+  SessionBloc() {
+    Future.delayed(Duration.zero, () {
+      User firebaseUser = _signInManager.currentFirebaseUser();
+      if (firebaseUser?.uid?.isNotEmpty == true) {
+        _readOrCreateUser(firebaseUser);
+      }
+    });
+  }
+
+  UserItem _currentUser;
   bool get isSignedIn => _currentUser != null;
   UserItem get currentUser => _currentUser;
   set currentUser(UserItem value) {
@@ -34,25 +43,25 @@ class SessionBloc extends ChangeNotifier {
         firebaseUser = await _signInManager.signInWithGithub();
         break;
     }
-    if (firebaseUser != null) {
-      UserItem signInResult;
-      try {
-        signInResult = await UserApi.instance.readUserByUid(firebaseUser.uid);
-      } catch (_) {}
+    return await _readOrCreateUser(firebaseUser);
+  }
 
-      if (signInResult != null) {
-        currentUser = signInResult;
-      } else {
-        currentUser = await _createUser(firebaseUser);
-      }
+  Future<UserItem> _readOrCreateUser(User firebaseUser) async {
+    UserItem signInResult;
+    try {
+      signInResult = await UserApi.instance.readUserByUid(firebaseUser.uid);
+    } catch (_) {}
+
+    if (signInResult == null) {
+      signInResult = await _createUser(firebaseUser);
     }
+    currentUser = signInResult;
     return _currentUser;
   }
 
   Future<UserItem> _createUser(User firebaseUser) async {
-    currentUser =
-        await UserApi.instance.createUser(UserItem.firebaseUser(firebaseUser));
-    return _currentUser;
+    return await UserApi.instance
+        .createUser(UserItem.firebaseUser(firebaseUser));
   }
 
   Future<void> signOut() async {

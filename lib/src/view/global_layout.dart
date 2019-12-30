@@ -8,6 +8,8 @@ import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/view/page/page_users.dart';
 
+import 'component/view_user_profile.dart';
+
 const double CONTENTS_MIN_WIDTH = 700;
 const double CONTENTS_MAX_WIDTH = 800;
 const double MENU_MIN_WIDTH = 200;
@@ -66,36 +68,39 @@ class GlobalLayout extends StatelessWidget {
           Consumer<SessionBloc>(
             builder: (_, sessionBloc, __) {
               if (sessionBloc.isSignedIn) {
-                return PopupMenuButton(
-                  icon: Icon(Icons.account_circle),
-                  onSelected: (v) async {
-                    switch (v) {
-                      case 'profile':
-                        if (sessionBloc.currentUser?.id != null) {
-                          Navigator.of(context).pushNamed(
-                            UsersPage.routeName,
-                            arguments: sessionBloc.currentUser,
-                          );
-                        }
-                        break;
-                      case 'signout':
-                        await sessionBloc.signOut();
-                        Navigator.of(context).pushNamed('/');
-                        break;
-                    }
-                  },
-                  itemBuilder: (context) {
-                    return [
-                      PopupMenuItem(
-                        value: 'profile',
-                        child: Text('Profile'),
-                      ),
-                      PopupMenuItem(
-                        value: 'signout',
-                        child: Text('Sign out'),
-                      ),
-                    ];
-                  },
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: PopupMenuButton(
+                    child: UserProfileView(sessionBloc.currentUser),
+                    onSelected: (v) async {
+                      switch (v) {
+                        case 'profile':
+                          if (sessionBloc.currentUser?.id != null) {
+                            Navigator.of(context).pushNamed(
+                              UsersPage.routeName,
+                              arguments: sessionBloc.currentUser,
+                            );
+                          }
+                          break;
+                        case 'signout':
+                          await sessionBloc.signOut();
+                          Navigator.of(context).pushNamed('/');
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 'profile',
+                          child: Text('Profile'),
+                        ),
+                        PopupMenuItem(
+                          value: 'signout',
+                          child: Text('Sign out'),
+                        ),
+                      ];
+                    },
+                  ),
                 );
               } else if (path != '/users/signin') {
                 return FlatButton(
