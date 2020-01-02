@@ -17,7 +17,7 @@ class ArticleApi {
   }) async {
     return firestore()
         .collection('articles')
-        .orderBy('createTime')
+        .orderBy('createTime', 'desc')
         .limit(count)
         .get()
         .then((v) {
@@ -27,7 +27,7 @@ class ArticleApi {
         list.add(item..id = e.id);
       });
       return list;
-    });
+    }).catchError((e) => e);
   }
 
   Future<List<ArticleItem>> readArticlesByUser(
@@ -35,6 +35,19 @@ class ArticleApi {
     int count = 30,
     int offset = 0,
   }) {
-    return null;
+    return firestore()
+        .collection('articles')
+        .where('userId', '==', userId)
+        .orderBy('createTime', 'desc')
+        .limit(count)
+        .get()
+        .then((v) {
+      List<ArticleItem> list = List();
+      v.docs.forEach((e) {
+        var item = ArticleItem.fromJson(e.data());
+        list.add(item..id = e.id);
+      });
+      return list;
+    }).catchError((e) => e);
   }
 }

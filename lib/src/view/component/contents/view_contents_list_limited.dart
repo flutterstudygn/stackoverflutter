@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/model/contents/contents_query_item.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_article_item.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_question_item.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
@@ -7,11 +8,13 @@ import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 class LimitedContentsListPanel<T extends ContentsItem> extends StatelessWidget {
   final Stream<List<ContentsItem>> stream;
   final ContentsType type;
+  final ContentsQueryItem query;
   final int maxShowingSize;
 
   LimitedContentsListPanel({
     @required this.stream,
     @required this.type,
+    this.query,
     this.maxShowingSize = 3,
   });
 
@@ -39,7 +42,8 @@ class LimitedContentsListPanel<T extends ContentsItem> extends StatelessWidget {
     return InkWell(
       onTap: () {
         if (path?.isNotEmpty == true) {
-          Navigator.of(context).pushNamed(path);
+          String queryStr = query?.queryStr ?? '';
+          Navigator.of(context).pushNamed('$path$queryStr');
         }
       },
       child: Text(
@@ -52,8 +56,30 @@ class LimitedContentsListPanel<T extends ContentsItem> extends StatelessWidget {
   Widget _buildItemList(ContentsType contentsType) {
     return StreamBuilder<List<ContentsItem>>(
       stream: stream,
-      builder: (_, snapshot) {
-        if (stream == null) return Container();
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Error',
+              style: Theme.of(context).textTheme.subhead,
+            ),
+          ));
+        }
+        if (stream == null ||
+            (snapshot.connectionState == ConnectionState.active &&
+                snapshot.data?.isNotEmpty != true)) {
+          return Center(
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'No result',
+              style: Theme.of(context).textTheme.subhead,
+            ),
+          ));
+        }
+
         int length = snapshot.data?.length ?? maxShowingSize;
         if (length > maxShowingSize) length = maxShowingSize;
         return Padding(

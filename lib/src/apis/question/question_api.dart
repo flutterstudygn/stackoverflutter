@@ -17,7 +17,7 @@ class QuestionApi {
   }) async {
     return firestore()
         .collection('questions')
-        .orderBy('createTime')
+        .orderBy('createTime', 'desc')
         .limit(count)
         .get()
         .then((v) {
@@ -35,6 +35,19 @@ class QuestionApi {
     int count = 30,
     int offset = 0,
   }) {
-    return null;
+    return firestore()
+        .collection('questions')
+        .where('userId', '==', userId)
+        .orderBy('createTime', 'desc')
+        .limit(count)
+        .get()
+        .then((v) {
+      List<QuestionItem> list = List();
+      v.docs.forEach((e) {
+        var item = QuestionItem.fromJson(e.data());
+        list.add(item..id = e.id);
+      });
+      return list;
+    });
   }
 }
