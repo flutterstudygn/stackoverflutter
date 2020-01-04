@@ -6,6 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/home_bloc.dart';
 import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/util/custom_routes.dart';
+import 'package:stackoverflutter/src/util/query_builder.dart';
+import 'package:stackoverflutter/src/util/web_navigator.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
+import 'package:stackoverflutter/src/view/page/page_home.dart';
+import 'package:stackoverflutter/src/view/page/page_not_found.dart';
+import 'package:stackoverflutter/src/view/page/page_signin.dart';
 import 'package:stackoverflutter/src/view/page/page_users.dart';
 
 import 'component/view_user_profile.dart';
@@ -15,14 +22,13 @@ const double CONTENTS_MAX_WIDTH = 800;
 const double MENU_MIN_WIDTH = 200;
 
 class GlobalLayout extends StatelessWidget {
-  final Widget body;
-  final String path;
+  final GlobalKey<WebNavigatorState> _navigator = GlobalKey();
+  final String route;
   final Color backgroundColor;
   final bool showMenu;
 
-  const GlobalLayout({
-    this.body,
-    this.path,
+  GlobalLayout({
+    this.route,
     this.backgroundColor,
     this.showMenu = true,
     Key key,
@@ -55,7 +61,7 @@ class GlobalLayout extends StatelessWidget {
       appBar: AppBar(
         title: InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed('/');
+            _navigator.currentState.pushNamed('/');
           },
           child: Image.asset(
             'assets/images/logo.png',
@@ -76,7 +82,7 @@ class GlobalLayout extends StatelessWidget {
                       switch (v) {
                         case 'profile':
                           if (sessionBloc.currentUser?.id != null) {
-                            Navigator.of(context).pushNamed(
+                            _navigator.currentState.pushNamed(
                               UsersPage.routeName,
                               arguments: sessionBloc.currentUser,
                             );
@@ -84,7 +90,7 @@ class GlobalLayout extends StatelessWidget {
                           break;
                         case 'signout':
                           await sessionBloc.signOut();
-                          Navigator.of(context).pushNamed('/');
+                          _navigator.currentState.pushNamed('/');
                           break;
                       }
                     },
@@ -102,10 +108,10 @@ class GlobalLayout extends StatelessWidget {
                     },
                   ),
                 );
-              } else if (path != '/users/signin') {
+              } else if (route != '/users/signin') {
                 return FlatButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/users/signin');
+                    _navigator.currentState.pushNamed('/users/signin');
                   },
                   child: Text('Sign In'),
                 );
@@ -148,7 +154,58 @@ class GlobalLayout extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Container(
                 constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
-                child: body,
+                child: WebNavigator(
+                  key: _navigator,
+                  initialRoute: route,
+                  onGenerateRoute: (settings) {
+                    Widget page;
+                    bool maintainState = true;
+                    Map<String, String> queryObject;
+
+                    if (settings.name.contains('?')) {
+                      String query = settings.name.split('?').last;
+                      queryObject = QueryBuilder.decode(query);
+                    }
+
+                    switch (settings.name) {
+                      case HomePage.routeName:
+                        page = HomePage();
+                        maintainState = false;
+                        break;
+                      case ContentsListPage.routeNameArticles:
+                        page = ContentsListPage.articles(
+                          queryObject: queryObject,
+                        );
+                        maintainState = false;
+                        break;
+                      case ContentsListPage.routeNameQuestions:
+                        page = ContentsListPage.questions(
+                          queryObject: queryObject,
+                        );
+                        maintainState = false;
+                        break;
+                      case SignInPage.routeName:
+                        page = SignInPage();
+                        break;
+                      default:
+                        page = NotFoundPage();
+                        break;
+                    }
+
+                    return NoTransitionPageRoute(
+                      builder: (_) => SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: page,
+                        ),
+                      ),
+                      settings: settings,
+                      maintainState: maintainState,
+                    );
+                  },
+                  observers: [BidirectionalRouteManager()],
+                ),
               ),
             ),
           ),
@@ -163,29 +220,46 @@ class GlobalLayout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        _buildMenuItem(context, 'Home', path: '/', isSelected: path == '/'),
-        _buildMenuItem(context, 'Articles', path: '/articles'),
-        _buildMenuItem(context, 'Questions', path: '/questions'),
-        _buildMenuItem(context, 'About', path: '/about'),
+        _buildMenuItem(
+          context,
+          'Home',
+          HomePage.routeName,
+          isSelected: route == Navigator.defaultRouteName,
+        ),
+        _buildMenuItem(
+          context,
+          'Articles',
+          ContentsListPage.routeNameArticles,
+        ),
+        _buildMenuItem(
+          context,
+          'Questions',
+          ContentsListPage.routeNameQuestions,
+        ),
+        _buildMenuItem(
+          context,
+          'About',
+          '/about',
+        ),
       ],
     );
   }
 
   Widget _buildMenuItem(
     BuildContext context,
-    String text, {
-    String path,
+    String text,
+    String path, {
     bool isSelected,
   }) {
     return InkWell(
       onTap: () {
         if (path?.isNotEmpty == true) {
-          Navigator.of(context).pushNamed(path);
+          _navigator.currentState.pushNamed(path);
         }
       },
       child: Container(
         width: double.infinity,
-        color: isSelected ?? this.path?.startsWith(path) == true
+        color: isSelected ?? this.route?.startsWith(path) == true
             ? Theme.of(context).dividerColor
             : Colors.transparent,
         child: Padding(
@@ -222,7 +296,7 @@ class GlobalLayout extends StatelessWidget {
                 ),
               ),
             ),
-            if (path != '/')
+            if (route != '/')
               Column(
                 children: <Widget>[
                   _buildRecentItemList(ContentsType.ARTICLE),
@@ -285,7 +359,7 @@ class GlobalLayout extends StatelessWidget {
                           onTap: item?.id == null
                               ? null
                               : () {
-                                  Navigator.of(ctx)
+                                  _navigator.currentState
                                       .pushNamed('$linkPath${item.id}');
                                 },
                           child: Container(
