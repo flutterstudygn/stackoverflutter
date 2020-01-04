@@ -44,7 +44,7 @@ class UsersPage extends StatelessWidget {
 
             if (snapshot.connectionState == ConnectionState.done) {
               return Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(18),
                 child: Provider<UserDetailBloc>(
                   create: (_) => UserDetailBloc()..init(snapshot.data.id),
                   dispose: (_, bloc) => bloc.dispose(),
@@ -56,7 +56,7 @@ class UsersPage extends StatelessWidget {
                             height: _userCardHeight,
                             child: _UsersCard(snapshot.data),
                           ),
-                          SizedBox(height: 16),
+                          SizedBox(height: 18),
                           StreamBuilder<UserDetailItem>(
                             stream: bloc.activities,
                             builder: (context, snapshot) {
@@ -135,7 +135,7 @@ class _UserActivity extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, int> activities = UserDetailItem.getActivities(_userDetailItem);
-    List<Widget> children = List.generate(activities?.length ?? 0, (i) {
+    List<Widget> children = List.generate(activities.length, (i) {
       String activity = activities.keys.elementAt(i);
       int count = activities.values.elementAt(i);
 

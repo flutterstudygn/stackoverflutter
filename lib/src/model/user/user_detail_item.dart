@@ -38,9 +38,9 @@ class UserDetailItem extends UserItem {
   }
 
   static Map<String, int> getActivities(UserDetailItem item) => {
-        'Articles': item?.articleCount,
-        'Questions': item?.questionCount,
-        'Answers': item?.answerCount,
-        'Stars': item?.startCount,
+        'Articles': item?.articleCount ?? 0,
+        'Questions': item?.questionCount ?? 0,
+        'Answers': item?.answerCount ?? 0,
+        'Stars': item?.startCount ?? 0,
       };
 }
