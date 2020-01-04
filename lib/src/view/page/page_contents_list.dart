@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/util/query_builder.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_article_item.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_minimized_contents_list.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_question_item.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 
 class ContentsListPage extends StatelessWidget {
@@ -9,18 +13,24 @@ class ContentsListPage extends StatelessWidget {
   /// 리스트의 각 아이템을 만들 builder 함수.
   ///
   /// 인자는 서버로부터 받아오는 arguments object.
-  final Widget Function(Map<String, dynamic>) itemBuilder;
-  final String route;
+  final Widget Function(ContentsItem) _itemBuilder;
+  final String _route;
   final String title;
+  final int maxCount;
 
-  ContentsListPage(this.route, this.itemBuilder, {this.title});
+  ContentsListPage(
+    this._route,
+    this._itemBuilder, {
+    this.title,
+    this.maxCount = 30,
+  });
 
   factory ContentsListPage.articles({Map<String, String> queryObject}) =>
       ContentsListPage(
         queryObject == null
             ? routeNameArticles
             : routeNameArticles + QueryBuilder.encode(queryObject),
-        null, // todo: widget builder for articles
+        ArticleItemView.builder,
         title: 'Articles',
       );
 
@@ -29,7 +39,7 @@ class ContentsListPage extends StatelessWidget {
         queryObject == null
             ? routeNameQuestions
             : routeNameQuestions + QueryBuilder.encode(queryObject),
-        null, // todo: widget builder for questions
+        QuestionItemView.builder,
         title: 'Questions',
       );
 
@@ -38,10 +48,10 @@ class ContentsListPage extends StatelessWidget {
     return Column(
       children: <Widget>[
         PanelHeaderView(title: title),
-        Column(
-          children: <Widget>[
-            // todo: some content widgets from itemBuilder.
-          ],
+        MinimizedContentsList(
+          _itemBuilder,
+          title.toLowerCase(),
+          maxCount: maxCount,
         ),
       ],
     );
