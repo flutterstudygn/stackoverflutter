@@ -10,8 +10,6 @@ import 'package:stackoverflutter/src/model/user/user_item.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_contents_list_limited.dart';
 import 'package:stackoverflutter/src/view/component/view_user_profile.dart';
 
-import '../global_layout.dart';
-
 const double _activityBarHeight = 50.0;
 const double _userCardHeight = 120.0;
 
@@ -27,66 +25,60 @@ class UsersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlobalLayout(
-      path: UsersPage.routeName,
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: FutureBuilder<UserItem>(
-          future: _getUser ??
-              Future.value(
-                Provider.of<SessionBloc>(context).currentUser ??
-                    Future.error(
-                      Exception('Current user doesn\'t exist'),
-                    ),
-              ),
-          builder: (_, snapshot) {
-            if (snapshot.hasError) return Text(snapshot.error.toString());
-
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Padding(
-                padding: const EdgeInsets.all(18),
-                child: Provider<UserDetailBloc>(
-                  create: (_) => UserDetailBloc()..init(snapshot.data.id),
-                  dispose: (_, bloc) => bloc.dispose(),
-                  child: Consumer<UserDetailBloc>(
-                    builder: (ctx, bloc, _) {
-                      return Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: _userCardHeight,
-                            child: _UsersCard(snapshot.data),
-                          ),
-                          SizedBox(height: 18),
-                          StreamBuilder<UserDetailItem>(
-                            stream: bloc.activities,
-                            builder: (context, snapshot) {
-                              return _UserActivity(snapshot.data);
-                            },
-                          ),
-                          SizedBox(height: 18),
-                          LimitedContentsListPanel(
-                            stream: bloc.articles,
-                            query: ContentsQueryItem(uid: snapshot.data.id),
-                            type: ContentsType.ARTICLE,
-                          ),
-                          SizedBox(height: 18),
-                          LimitedContentsListPanel(
-                            stream: bloc.questions,
-                            query: ContentsQueryItem(uid: snapshot.data.id),
-                            type: ContentsType.QUESTION,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+    return FutureBuilder<UserItem>(
+      future: _getUser ??
+          Future.value(
+            Provider.of<SessionBloc>(context).currentUser ??
+                Future.error(
+                  Exception('Current user doesn\'t exist'),
                 ),
-              );
-            }
+          ),
+      builder: (_, snapshot) {
+        if (snapshot.hasError) return Text(snapshot.error.toString());
 
-            return Text('loading');
-          },
-        ),
-      ),
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Padding(
+            padding: const EdgeInsets.all(18),
+            child: Provider<UserDetailBloc>(
+              create: (_) => UserDetailBloc()..init(snapshot.data.id),
+              dispose: (_, bloc) => bloc.dispose(),
+              child: Consumer<UserDetailBloc>(
+                builder: (ctx, bloc, _) {
+                  return Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: _userCardHeight,
+                        child: _UsersCard(snapshot.data),
+                      ),
+                      SizedBox(height: 18),
+                      StreamBuilder<UserDetailItem>(
+                        stream: bloc.activities,
+                        builder: (context, snapshot) {
+                          return _UserActivity(snapshot.data);
+                        },
+                      ),
+                      SizedBox(height: 18),
+                      LimitedContentsListPanel(
+                        stream: bloc.articles,
+                        query: ContentsQueryItem(uid: snapshot.data.id),
+                        type: ContentsType.ARTICLE,
+                      ),
+                      SizedBox(height: 18),
+                      LimitedContentsListPanel(
+                        stream: bloc.questions,
+                        query: ContentsQueryItem(uid: snapshot.data.id),
+                        type: ContentsType.QUESTION,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        }
+
+        return Text('loading');
+      },
     );
   }
 }
@@ -130,6 +122,7 @@ class _UsersCard extends StatelessWidget {
 
 class _UserActivity extends StatelessWidget {
   final UserDetailItem _userDetailItem;
+
   _UserActivity(this._userDetailItem);
 
   @override
