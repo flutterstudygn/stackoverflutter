@@ -35,4 +35,9 @@ class UserItem {
   UserItem clone() {
     return UserItem.fromJson(this.toJson());
   }
+
+  @override
+  String toString() {
+    return 'UserItem{id: $id, name: $name, description: $description, imageUrl: $imageUrl, email: $email}';
+  }
 }

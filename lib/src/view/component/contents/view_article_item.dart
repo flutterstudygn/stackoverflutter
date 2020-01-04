@@ -21,7 +21,10 @@ class ArticleItemView extends StatelessWidget {
       onTap: _item?.id == null
           ? null
           : () {
-              Navigator.of(context).pushNamed('/articles?id=${_item.id}');
+              Navigator.of(context).pushNamed(
+                '/articles?id=${_item.id}',
+                arguments: _item,
+              );
             },
       child: Container(
         width: double.infinity,

@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:stackoverflutter/src/apis/article/article_api.dart';
-import 'package:stackoverflutter/src/apis/question/question_api.dart';
+import 'package:stackoverflutter/src/apis/contents/contents_api.dart';
 import 'package:stackoverflutter/src/apis/user/user_api.dart';
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
@@ -36,7 +35,7 @@ class UserDetailBloc {
     int count = 30,
     int offset = 0,
   }) {
-    return ArticleApi.instance
+    return ContentsApi.instance
         .readArticlesByUser(uid, count: count, offset: offset)
         .then((v) {
       _articleStream.add(v);
@@ -51,7 +50,7 @@ class UserDetailBloc {
     int count = 30,
     int offset = 0,
   }) {
-    return QuestionApi.instance
+    return ContentsApi.instance
         .readQuestionsByUser(uid, count: count, offset: offset)
         .then((v) {
       _questionStream.add(v);
