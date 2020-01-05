@@ -9,6 +9,7 @@ import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/util/custom_routes.dart';
 import 'package:stackoverflutter/src/util/query_builder.dart';
 import 'package:stackoverflutter/src/util/web_navigator.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_home.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
@@ -162,12 +163,15 @@ class GlobalLayout extends StatelessWidget {
                     bool maintainState = true;
                     Map<String, String> queryObject;
 
+                    String routeName = settings.name;
                     if (settings.name.contains('?')) {
-                      String query = settings.name.split('?').last;
+                      List<String> splits = settings.name.split('?');
+                      routeName = splits.first;
+                      String query = splits.last;
                       queryObject = QueryBuilder.decode(query);
                     }
 
-                    switch (settings.name) {
+                    switch (routeName) {
                       case HomePage.routeName:
                         page = HomePage();
                         maintainState = false;
@@ -183,6 +187,15 @@ class GlobalLayout extends StatelessWidget {
                           queryObject: queryObject,
                         );
                         maintainState = false;
+                        break;
+
+                      case ContentsDetailPage.routeNameArticle:
+                        page = ContentsDetailPage.article(
+                            queryObject['id'], settings.arguments);
+                        break;
+                      case ContentsDetailPage.routeNameQuestion:
+                        page = ContentsDetailPage.question(
+                            queryObject['id'], settings.arguments);
                         break;
                       case SignInPage.routeName:
                         page = SignInPage();
@@ -317,12 +330,12 @@ class GlobalLayout extends StatelessWidget {
       case ContentsType.ARTICLE:
         stream = HomeBloc.instance.articleStream;
         title = 'Recent articles';
-        linkPath = '/articles?id=';
+        linkPath = '${ContentsDetailPage.routeNameArticle}?id=';
         break;
       case ContentsType.QUESTION:
         stream = HomeBloc.instance.questionStream;
         title = 'Recent questions';
-        linkPath = '/questions?id=';
+        linkPath = '${ContentsDetailPage.routeNameQuestion}?id=';
         break;
     }
     return StreamBuilder<List<ContentsItem>>(
