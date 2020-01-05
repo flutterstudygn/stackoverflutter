@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/apis/user/user_api.dart';
 import 'package:stackoverflutter/src/bloc/session_bloc.dart';
+import 'package:stackoverflutter/src/bloc/user_detail_bloc.dart';
+import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/model/contents/contents_query_item.dart';
+import 'package:stackoverflutter/src/model/user/user_detail_item.dart';
 import 'package:stackoverflutter/src/model/user/user_item.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_contents_list_limited.dart';
+import 'package:stackoverflutter/src/view/component/view_user_profile.dart';
 
 import '../global_layout.dart';
 
@@ -33,24 +39,47 @@ class UsersPage extends StatelessWidget {
                       Exception('Current user doesn\'t exist'),
                     ),
               ),
-          builder: (context, snapshot) {
+          builder: (_, snapshot) {
             if (snapshot.hasError) return Text(snapshot.error.toString());
 
             if (snapshot.connectionState == ConnectionState.done) {
-              return Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: _userCardHeight,
-                    child: _UsersCard(snapshot.data),
+              return Padding(
+                padding: const EdgeInsets.all(18),
+                child: Provider<UserDetailBloc>(
+                  create: (_) => UserDetailBloc()..init(snapshot.data.id),
+                  dispose: (_, bloc) => bloc.dispose(),
+                  child: Consumer<UserDetailBloc>(
+                    builder: (ctx, bloc, _) {
+                      return Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: _userCardHeight,
+                            child: _UsersCard(snapshot.data),
+                          ),
+                          SizedBox(height: 18),
+                          StreamBuilder<UserDetailItem>(
+                            stream: bloc.activities,
+                            builder: (context, snapshot) {
+                              return _UserActivity(snapshot.data);
+                            },
+                          ),
+                          SizedBox(height: 18),
+                          LimitedContentsListPanel(
+                            stream: bloc.articles,
+                            query: ContentsQueryItem(uid: snapshot.data.id),
+                            type: ContentsType.ARTICLE,
+                          ),
+                          SizedBox(height: 18),
+                          LimitedContentsListPanel(
+                            stream: bloc.questions,
+                            query: ContentsQueryItem(uid: snapshot.data.id),
+                            type: ContentsType.QUESTION,
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  SizedBox(height: 16),
-                  SizedBox(
-                    height: _activityBarHeight,
-                    child: _UserActivity(),
-                  ),
-                  SizedBox(height: 16),
-                  // todo: user's show articles & questions.
-                ],
+                ),
               );
             }
 
@@ -72,24 +101,7 @@ class _UsersCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(
-          width: _avatarSize,
-          height: _avatarSize,
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: CircularProgressIndicator(),
-              ),
-              CircleAvatar(
-                foregroundColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                backgroundImage: Image.network(_userItem.imageUrl).image,
-              ),
-            ],
-          ),
-        ),
+        UserProfileView(_userItem, size: _avatarSize),
         SizedBox(
           width: 20,
         ),
@@ -117,18 +129,15 @@ class _UsersCard extends StatelessWidget {
 }
 
 class _UserActivity extends StatelessWidget {
-  final Map<String, int> _activities = {
-    'Articles': 12,
-    'Questions': 12,
-    'Answers': 12,
-    'Stars': 12,
-  };
+  final UserDetailItem _userDetailItem;
+  _UserActivity(this._userDetailItem);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = List.generate(_activities.length, (i) {
-      String activity = _activities.keys.elementAt(i);
-      int count = _activities.values.elementAt(i);
+    Map<String, int> activities = UserDetailItem.getActivities(_userDetailItem);
+    List<Widget> children = List.generate(activities.length, (i) {
+      String activity = activities.keys.elementAt(i);
+      int count = activities.values.elementAt(i);
 
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -141,7 +150,7 @@ class _UserActivity extends StatelessWidget {
             ),
             SizedBox(height: 8),
             Text(
-              count.toString(),
+              count?.toString() ?? '-',
               style: Theme.of(context).textTheme.title,
             ),
           ],
@@ -152,11 +161,14 @@ class _UserActivity extends StatelessWidget {
     for (int i = 1; i < children.length; i += 2) {
       children.insert(
         i,
-        VerticalDivider(
-          color: Colors.grey,
-          indent: _activityBarHeight / 8,
-          endIndent: _activityBarHeight / 8,
-          thickness: 2,
+        Container(
+          height: _activityBarHeight,
+          child: VerticalDivider(
+            color: Colors.grey,
+            indent: _activityBarHeight / 8,
+            endIndent: _activityBarHeight / 8,
+            thickness: 2,
+          ),
         ),
       );
     }
