@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
+import 'package:stackoverflutter/src/util/web_navigator.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
 
 class QuestionItemView extends StatelessWidget {
   final QuestionItem _item;
@@ -21,7 +23,10 @@ class QuestionItemView extends StatelessWidget {
       onTap: _item?.id == null
           ? null
           : () {
-              Navigator.of(context).pushNamed('/questions?id=${_item.id}');
+              WebNavigator.of(context).pushNamed(
+                '${ContentsDetailPage.routeNameQuestion}?id=${_item.id}',
+                arguments: _item,
+              );
             },
       child: Container(
         width: double.infinity,

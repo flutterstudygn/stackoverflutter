@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
-import 'package:stackoverflutter/src/apis/article/article_api.dart';
-import 'package:stackoverflutter/src/apis/question/question_api.dart';
+import 'package:stackoverflutter/src/apis/contents/contents_api.dart';
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
 
@@ -32,14 +31,14 @@ class HomeBloc {
   }
 
   Future<List<ArticleItem>> _loadRecentArticles() {
-    return ArticleApi.instance.readArticles(count: 5).then((v) {
+    return ContentsApi.instance.readArticles(count: 5).then((v) {
       articleStream.sink.add(v);
       return v;
     });
   }
 
   Future<List<QuestionItem>> _loadRecentQuestions() {
-    return QuestionApi.instance.readQuestions(count: 5).then((v) {
+    return ContentsApi.instance.readQuestions(count: 5).then((v) {
       questionStream.sink.add(v);
       return v;
     });

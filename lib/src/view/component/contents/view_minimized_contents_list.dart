@@ -28,7 +28,8 @@ class MinimizedContentsList extends StatelessWidget {
         .map(
           (snapshots) => List.generate(
             snapshots.size,
-            (i) => ContentsItem.fromJson(snapshots.docs[i].data()),
+            (i) => ContentsItem.fromJson(snapshots.docs[i].data())
+              ..id = snapshots.docs[i].id,
           ),
         );
 
