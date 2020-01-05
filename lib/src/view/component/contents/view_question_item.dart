@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
 
 class QuestionItemView extends StatelessWidget {
   final QuestionItem _item;
-  QuestionItemView(this._item, {Key key}) : super(key: key);
+
+  const QuestionItemView(this._item, {Key key}) : super(key: key);
+
+  static Widget Function(ContentsItem) builder = (item) {
+    try {
+      return QuestionItemView(QuestionItem.fromContents(item));
+    } catch (_) {
+      return SizedBox();
+    }
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +25,7 @@ class QuestionItemView extends StatelessWidget {
             },
       child: Container(
         width: double.infinity,
-        child: Container(height: 80.0),
+        child: Text(_item.title),
       ),
     );
   }

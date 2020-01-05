@@ -1,46 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/util/query_builder.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_article_item.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_minimized_contents_list.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_question_item.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
-import 'package:stackoverflutter/src/view/global_layout.dart';
 
 class ContentsListPage extends StatelessWidget {
-  final ContentsType _contentsType;
-  ContentsListPage(this._contentsType);
+  static const String routeNameArticles = '/articles';
+  static const String routeNameQuestions = '/questions';
+
+  /// 리스트의 각 아이템을 만들 builder 함수.
+  ///
+  /// 인자는 서버로부터 받아오는 arguments object.
+  final Widget Function(ContentsItem) _itemBuilder;
+  final String _route;
+  final String title;
+  final int maxCount;
+
+  ContentsListPage(
+    this._route,
+    this._itemBuilder, {
+    this.title,
+    this.maxCount = 30,
+  });
+
+  factory ContentsListPage.articles({Map<String, String> queryObject}) =>
+      ContentsListPage(
+        queryObject == null
+            ? routeNameArticles
+            : routeNameArticles + QueryBuilder.encode(queryObject),
+        ArticleItemView.builder,
+        title: 'Articles',
+      );
+
+  factory ContentsListPage.questions({Map<String, String> queryObject}) =>
+      ContentsListPage(
+        queryObject == null
+            ? routeNameQuestions
+            : routeNameQuestions + QueryBuilder.encode(queryObject),
+        QuestionItemView.builder,
+        title: 'Questions',
+      );
 
   @override
   Widget build(BuildContext context) {
-    return GlobalLayout(
-      path: _generatePath(),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          children: <Widget>[
-            PanelHeaderView(
-              title: _generateTitle(),
-            ),
-          ],
+    return Column(
+      children: <Widget>[
+        PanelHeaderView(title: title),
+        MinimizedContentsList(
+          _itemBuilder,
+          title.toLowerCase(),
+          maxCount: maxCount,
         ),
-      ),
+      ],
     );
-  }
-
-  String _generatePath() {
-    switch (_contentsType) {
-      case ContentsType.ARTICLE:
-        return '/articles';
-      case ContentsType.QUESTION:
-        return '/questions';
-    }
-    return null;
-  }
-
-  String _generateTitle() {
-    switch (_contentsType) {
-      case ContentsType.ARTICLE:
-        return 'Articles';
-      case ContentsType.QUESTION:
-        return 'Questions';
-    }
-    return null;
   }
 }
