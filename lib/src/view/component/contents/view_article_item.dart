@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/util/web_navigator.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
 
 class ArticleItemView extends StatelessWidget {
   final ArticleItem _item;
@@ -21,8 +23,8 @@ class ArticleItemView extends StatelessWidget {
       onTap: _item?.id == null
           ? null
           : () {
-              Navigator.of(context).pushNamed(
-                '/articles?id=${_item.id}',
+              WebNavigator.of(context).pushNamed(
+                '${ContentsDetailPage.routeNameArticle}?id=${_item.id}',
                 arguments: _item,
               );
             },
@@ -32,7 +34,7 @@ class ArticleItemView extends StatelessWidget {
           borderRadius: BorderRadius.circular(5.0),
           border: Border.all(color: Theme.of(context).dividerColor),
         ),
-        child: Text(_item.title),
+        child: Text(_item.toString() ?? '-'),
       ),
     );
   }
