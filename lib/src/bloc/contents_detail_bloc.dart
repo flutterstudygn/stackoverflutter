@@ -36,10 +36,10 @@ class ContentsDetailBloc {
     if (item == null && _itemId?.isNotEmpty == true) {
       switch (_contentsType) {
         case ContentsType.ARTICLE:
-          ContentsApi.instance.readArticle(_itemId).then((v) => _item = v);
+          ContentsApi.instance.readArticleById(_itemId).then((v) => _item = v);
           break;
         case ContentsType.QUESTION:
-          ContentsApi.instance.readQuestion(_itemId).then((v) => _item = v);
+          ContentsApi.instance.readQuestionById(_itemId).then((v) => _item = v);
           break;
       }
     }
