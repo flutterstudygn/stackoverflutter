@@ -128,7 +128,7 @@ class GlobalLayout extends StatelessWidget {
               elevation: 5.0,
               child: Padding(
                 padding: EdgeInsets.only(top: drawerPadding),
-                child: _buildMenuLayout(context),
+                child: _SideMenu(_navigator),
               ),
             )
           : null,
@@ -145,7 +145,7 @@ class GlobalLayout extends StatelessWidget {
                     ),
                     child: Container(
                       width: MENU_MIN_WIDTH,
-                      child: _buildMenuLayout(context),
+                      child: _SideMenu(_navigator),
                     ),
                   )
                 : Container(
@@ -223,65 +223,6 @@ class GlobalLayout extends StatelessWidget {
           if (hasSideExtra)
             Container(width: menuWidth, child: _buildSideExtra())
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuLayout(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
-        _buildMenuItem(
-          context,
-          'Home',
-          HomePage.routeName,
-          isSelected: route == Navigator.defaultRouteName,
-        ),
-        _buildMenuItem(
-          context,
-          'Articles',
-          ContentsListPage.routeNameArticles,
-        ),
-        _buildMenuItem(
-          context,
-          'Questions',
-          ContentsListPage.routeNameQuestions,
-        ),
-        _buildMenuItem(
-          context,
-          'About',
-          '/about',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context,
-    String text,
-    String path, {
-    bool isSelected,
-  }) {
-    return InkWell(
-      onTap: () {
-        if (path?.isNotEmpty == true) {
-          _navigator.currentState.pushNamed(path);
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        color: isSelected ?? this.route?.startsWith(path) == true
-            ? Theme.of(context).dividerColor
-            : Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -398,6 +339,79 @@ class GlobalLayout extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _SideMenu extends StatefulWidget {
+  final GlobalKey<WebNavigatorState> _navigator;
+
+  const _SideMenu(this._navigator, {Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<_SideMenu> {
+  String currentRoute = Navigator.defaultRouteName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        _buildMenuItem(
+          context,
+          'Home',
+          HomePage.routeName,
+          isSelected: currentRoute == Navigator.defaultRouteName,
+        ),
+        _buildMenuItem(
+          context,
+          'Articles',
+          ContentsListPage.routeNameArticles,
+          isSelected: currentRoute == ContentsListPage.routeNameArticles,
+        ),
+        _buildMenuItem(
+          context,
+          'Questions',
+          ContentsListPage.routeNameQuestions,
+          isSelected: currentRoute == ContentsListPage.routeNameQuestions,
+        ),
+        _buildMenuItem(
+          context,
+          'About',
+          '/about',
+          isSelected: currentRoute == '/about',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context,
+    String text,
+    String path, {
+    bool isSelected,
+  }) {
+    return InkWell(
+      onTap: () {
+        widget._navigator.currentState.pushNamed(path);
+        setState(() => currentRoute = path);
+      },
+      child: Container(
+        width: double.infinity,
+        color: isSelected ? Theme.of(context).dividerColor : Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
