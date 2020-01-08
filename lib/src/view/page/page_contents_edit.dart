@@ -1,11 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 
-class CommentEditorView extends StatefulWidget {
+import 'package:provider/provider.dart';
+import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
+import 'package:stackoverflutter/src/model/user/user_item.dart';
+
+
+
+class ContentsEditPage extends StatefulWidget {
+
+  final ContentsType _contentsType;
+  final String passedItemId;
+  final ContentsItem passedItem;
+
+  const ContentsEditPage(
+      this._contentsType, {
+        this.passedItemId,
+        this.passedItem,
+        Key key,
+      }) : super(key: key);
+
+  static const String routeNameArticle = '/articles/edit';
+  static const String routeNameQuestion = '/questions/edit';
+
+
+  factory ContentsEditPage.article() {
+    return ContentsEditPage(ContentsType.ARTICLE);
+  }
+  factory ContentsEditPage.question() {
+    return ContentsEditPage(ContentsType.QUESTION);
+  }
+
+
+
   @override
-  _CommentEditorViewState createState() => _CommentEditorViewState();
+  ContentsEditPageState createState() => ContentsEditPageState();
 }
 
-class _CommentEditorViewState extends State<CommentEditorView> {
+class ContentsEditPageState extends State<ContentsEditPage> {
   //final TextEditingController _textController = new TextEditingController();
 
   List __items;
@@ -22,21 +54,13 @@ class _CommentEditorViewState extends State<CommentEditorView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Page"),
-      ),
-      body: _buildTextComposer(),
-    );
-  }
-
-  _buildTextComposer() {
     return Container(
       padding: EdgeInsets.all(15.0),
       margin: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Text(widget._contentsType == ContentsType.ARTICLE ? 'Article' : widget._contentsType == ContentsType.QUESTION ? 'Questions' : '-'),
           Padding(
             padding: EdgeInsets.all(8.0),
           ),
@@ -62,15 +86,17 @@ class _CommentEditorViewState extends State<CommentEditorView> {
                 color: Colors.blue),
           ),
           SizedBox(height: 10),
-          TextField(
-            textAlign: TextAlign.left,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            //controller: _textController,
-            decoration: InputDecoration(
-                //contentPadding: EdgeInsets.symmetric(vertical: 20),
-                border: OutlineInputBorder(),
-                hintText: 'Enter contents'),
+          Expanded(
+            child: TextField(
+              textAlign: TextAlign.left,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              //controller: _textController,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 20),
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter contents'),
+            ),
           ),
           SizedBox(height: 10),
           Text(
@@ -84,7 +110,7 @@ class _CommentEditorViewState extends State<CommentEditorView> {
           TextField(
             //controller: _textController,
             decoration:
-                InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
+            InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
           ),
           SizedBox(height: 10),
           Row(
@@ -92,7 +118,16 @@ class _CommentEditorViewState extends State<CommentEditorView> {
             children: <Widget>[
               RaisedButton(
                 color: Colors.blueAccent,
-                onPressed: () {},
+                onPressed: () {
+                  switch(widget._contentsType) {
+                    case ContentsType.ARTICLE:
+//                      api.createArticle(item);
+                      break;
+                    case ContentsType.QUESTION:
+//                      api.createQuestion(item);
+                      break;
+                  }
+                },
                 textColor: Colors.white,
                 child: Text(
                   'SUBMIT',

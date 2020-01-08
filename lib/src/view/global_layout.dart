@@ -10,6 +10,7 @@ import 'package:stackoverflutter/src/util/custom_routes.dart';
 import 'package:stackoverflutter/src/util/query_builder.dart';
 import 'package:stackoverflutter/src/util/web_navigator.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_edit.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_home.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
@@ -152,7 +153,6 @@ class GlobalLayout extends StatelessWidget {
                   ),
           Expanded(
             child: Container(
-//              constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
               child: WebNavigator(
                 key: _navigator,
                 initialRoute: route,
@@ -194,6 +194,12 @@ class GlobalLayout extends StatelessWidget {
                       page = ContentsDetailPage.question(
                           queryObject['id'], settings.arguments);
                       break;
+                    case ContentsEditPage.routeNameArticle:
+                      page = ContentsEditPage.article();
+                      break;
+                    case ContentsEditPage.routeNameQuestion:
+                      page = ContentsEditPage.question();
+                      break;
                     case SignInPage.routeName:
                       page = SignInPage();
                       break;
@@ -204,7 +210,6 @@ class GlobalLayout extends StatelessWidget {
                       page = NotFoundPage();
                       break;
                   }
-
                   return NoTransitionPageRoute(
                     builder: (_) => Padding(
                       padding: const EdgeInsets.all(18.0),
