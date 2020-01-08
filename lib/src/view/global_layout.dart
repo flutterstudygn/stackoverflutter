@@ -10,6 +10,7 @@ import 'package:stackoverflutter/src/util/custom_routes.dart';
 import 'package:stackoverflutter/src/util/query_builder.dart';
 import 'package:stackoverflutter/src/util/web_navigator.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_detail.dart';
+import 'package:stackoverflutter/src/view/page/page_contents_edit.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_list.dart';
 import 'package:stackoverflutter/src/view/page/page_home.dart';
 import 'package:stackoverflutter/src/view/page/page_not_found.dart';
@@ -151,74 +152,74 @@ class GlobalLayout extends StatelessWidget {
                     width: menuWidth,
                   ),
           Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Container(
-                constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
-                child: WebNavigator(
-                  key: _navigator,
-                  initialRoute: route,
-                  onGenerateRoute: (settings) {
-                    Widget page;
-                    bool maintainState = true;
-                    Map<String, String> queryObject;
+            child: Container(
+              constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
+              child: WebNavigator(
+                key: _navigator,
+                initialRoute: route,
+                onGenerateRoute: (settings) {
+                  Widget page;
+                  bool maintainState = true;
+                  Map<String, String> queryObject;
 
-                    String routeName = settings.name;
-                    if (settings.name.contains('?')) {
-                      List<String> splits = settings.name.split('?');
-                      routeName = splits.first;
-                      String query = splits.last;
-                      queryObject = QueryBuilder.decode(query);
-                    }
+                  String routeName = settings.name;
+                  if (settings.name.contains('?')) {
+                    List<String> splits = settings.name.split('?');
+                    routeName = splits.first;
+                    String query = splits.last;
+                    queryObject = QueryBuilder.decode(query);
+                  }
 
-                    switch (routeName) {
-                      case HomePage.routeName:
-                        page = HomePage();
-                        maintainState = false;
-                        break;
-                      case ContentsListPage.routeNameArticles:
-                        page = ContentsListPage.articles(
-                          queryObject: queryObject,
-                        );
-                        maintainState = false;
-                        break;
-                      case ContentsListPage.routeNameQuestions:
-                        page = ContentsListPage.questions(
-                          queryObject: queryObject,
-                        );
-                        maintainState = false;
-                        break;
+                  switch (routeName) {
+                    case HomePage.routeName:
+                      page = HomePage();
+                      maintainState = false;
+                      break;
+                    case ContentsListPage.routeNameArticles:
+                      page = ContentsListPage.articles(
+                        queryObject: queryObject,
+                      );
+                      maintainState = false;
+                      break;
+                    case ContentsListPage.routeNameQuestions:
+                      page = ContentsListPage.questions(
+                        queryObject: queryObject,
+                      );
+                      maintainState = false;
+                      break;
 
-                      case ContentsDetailPage.routeNameArticle:
-                        page = ContentsDetailPage.article(
-                            queryObject['id'], settings.arguments);
-                        break;
-                      case ContentsDetailPage.routeNameQuestion:
-                        page = ContentsDetailPage.question(
-                            queryObject['id'], settings.arguments);
-                        break;
-                      case SignInPage.routeName:
-                        page = SignInPage();
-                        break;
-                      default:
-                        page = NotFoundPage();
-                        break;
-                    }
+                    case ContentsDetailPage.routeNameArticle:
+                      page = ContentsDetailPage.article(
+                          queryObject['id'], settings.arguments);
+                      break;
+                    case ContentsDetailPage.routeNameQuestion:
+                      page = ContentsDetailPage.question(
+                          queryObject['id'], settings.arguments);
+                      break;
+                    case SignInPage.routeName:
+                      page = SignInPage();
+                      break;
+                    case ContentsEditPage.routeNameArticle:
+                      page = ContentsEditPage.article();
+                      break;
+                    case ContentsEditPage.routeNameQuestion:
+                      page = ContentsEditPage.question();
+                      break;
+                    default:
+                      page = NotFoundPage();
+                      break;
+                  }
 
-                    return NoTransitionPageRoute(
-                      builder: (_) => SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: page,
-                        ),
-                      ),
-                      settings: settings,
-                      maintainState: maintainState,
-                    );
-                  },
-                  observers: [BidirectionalRouteManager()],
-                ),
+                  return NoTransitionPageRoute(
+                    builder: (_) => Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: page,
+                    ),
+                    settings: settings,
+                    maintainState: maintainState,
+                  );
+                },
+                observers: [BidirectionalRouteManager()],
               ),
             ),
           ),
