@@ -37,42 +37,39 @@ class UsersPage extends StatelessWidget {
         if (snapshot.hasError) return Text(snapshot.error.toString());
 
         if (snapshot.connectionState == ConnectionState.done) {
-          return Padding(
-            padding: const EdgeInsets.all(18),
-            child: Provider<UserDetailBloc>(
-              create: (_) => UserDetailBloc()..init(snapshot.data.id),
-              dispose: (_, bloc) => bloc.dispose(),
-              child: Consumer<UserDetailBloc>(
-                builder: (ctx, bloc, _) {
-                  return Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: _userCardHeight,
-                        child: _UsersCard(snapshot.data),
-                      ),
-                      SizedBox(height: 18),
-                      StreamBuilder<UserDetailItem>(
-                        stream: bloc.activities,
-                        builder: (context, snapshot) {
-                          return _UserActivity(snapshot.data);
-                        },
-                      ),
-                      SizedBox(height: 18),
-                      LimitedContentsListPanel(
-                        stream: bloc.articles,
-                        query: ContentsQueryItem(uid: snapshot.data.id),
-                        type: ContentsType.ARTICLE,
-                      ),
-                      SizedBox(height: 18),
-                      LimitedContentsListPanel(
-                        stream: bloc.questions,
-                        query: ContentsQueryItem(uid: snapshot.data.id),
-                        type: ContentsType.QUESTION,
-                      ),
-                    ],
-                  );
-                },
-              ),
+          return Provider<UserDetailBloc>(
+            create: (_) => UserDetailBloc()..init(snapshot.data.id),
+            dispose: (_, bloc) => bloc.dispose(),
+            child: Consumer<UserDetailBloc>(
+              builder: (ctx, bloc, _) {
+                return Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: _userCardHeight,
+                      child: _UsersCard(snapshot.data),
+                    ),
+                    SizedBox(height: 18),
+                    StreamBuilder<UserDetailItem>(
+                      stream: bloc.activities,
+                      builder: (context, snapshot) {
+                        return _UserActivity(snapshot.data);
+                      },
+                    ),
+                    SizedBox(height: 18),
+                    LimitedContentsListPanel(
+                      stream: bloc.articles,
+                      query: ContentsQueryItem(uid: snapshot.data.id),
+                      type: ContentsType.ARTICLE,
+                    ),
+                    SizedBox(height: 18),
+                    LimitedContentsListPanel(
+                      stream: bloc.questions,
+                      query: ContentsQueryItem(uid: snapshot.data.id),
+                      type: ContentsType.QUESTION,
+                    ),
+                  ],
+                );
+              },
             ),
           );
         }
@@ -133,7 +130,7 @@ class _UserActivity extends StatelessWidget {
       int count = activities.values.elementAt(i);
 
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

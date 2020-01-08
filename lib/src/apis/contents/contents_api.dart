@@ -25,20 +25,36 @@ class ContentsApi {
     return null;
   }
 
-  void addViewCount(ContentsType type, String id) {
-    String collection = _getCollection(type);
-    if (collection == null || id?.isNotEmpty != true) return null;
+  /// addViewCount : ContentsItem view count(조회수) 증가
+  /// params :
+  ///   - [contentsType] : [ContentsType.ARTICLE], [ContentsType.QUESTION]
+  ///   - [contentsId]
+  /// return : void
+  void addViewCount(ContentsType contentsType, String contentsId) {
+    String collection = _getCollection(contentsType);
+    if (collection == null || contentsId?.isNotEmpty != true) return null;
 //    firestore().collection(collection).doc(id).update()
   }
 
   /* Articles */
-  Future<ArticleItem> readArticle(String id) {
-    return firestore().collection('articles').doc(id).get().then((v) {
+  /// readArticleById : Article 정보 조회
+  /// (See: [ContentsApi.readQuestionById])
+  /// params :
+  ///   - [articleId] : 조회하고자 하는 articleId
+  /// return : [ArticleItem]
+  Future<ArticleItem> readArticleById(String articleId) {
+    return firestore().collection('articles').doc(articleId).get().then((v) {
       ArticleItem item = ArticleItem.fromJson(v.data());
       return item..id = v.id;
     });
   }
 
+  /// readArticles : ArticleList 조회
+  /// (See: [ContentsApi.readQuestions])
+  /// params :
+  ///   - [count] : 조회 요청 개수 (default: 30)
+  ///   - [offset] : offset (default: 0)
+  ///   - [userId] : (optional) [ContentsApi.readArticlesByUser]
   Future<List<ArticleItem>> readArticles(
       {int count = 30, int offset = 0, String userId}) async {
     CollectionReference ref = firestore().collection('articles');
@@ -57,19 +73,37 @@ class ContentsApi {
     }).catchError((e) => e);
   }
 
+  /// readArticlesByUser : 사용자 별 ArticleList 조회
+  /// params :
+  ///   - [userId] :
+  ///   - [count] : 조회 요청 개수 (default: 30)
+  ///   - [offset] : offset (default: 0)
+  /// return : [List<ArticleItem>]
   Future<List<ArticleItem>> readArticlesByUser(String userId,
       {int count = 30, int offset = 0}) {
     return readArticles(count: count, offset: offset, userId: userId);
   }
 
   /* Questions */
-  Future<QuestionItem> readQuestion(String id) {
-    return firestore().collection('questions').doc(id).get().then((v) {
+  /// readQuestionById : Question 정보 조회
+  /// (See: [ContentsApi.readArticleById])
+  /// params :
+  ///   - [questionId] : 조회하고자 하는 questionId
+  /// return : [QuestionItem]
+  Future<QuestionItem> readQuestionById(String questionId) {
+    return firestore().collection('questions').doc(questionId).get().then((v) {
       QuestionItem item = QuestionItem.fromJson(v.data());
       return item..id = v.id;
     });
   }
 
+  /// readQuestions : QuestionList 조회
+  /// (See: [ContentsApi.readArticles])
+  /// params :
+  ///   - [count] : 조회 요청 개수 (default: 30)
+  ///   - [offset] : offset (default: 0)
+  ///   - [userId] : (optional) [ContentsApi.readQuestionsByUser]
+  /// return : [List<QuestionItem>]
   Future<List<QuestionItem>> readQuestions(
       {int count = 30, int offset = 0, String userId}) async {
 //    return _readContents(ContentsType.QUESTION, count, offset);
@@ -89,6 +123,12 @@ class ContentsApi {
     }).catchError((e) => e);
   }
 
+  /// readQuestionsByUser : 사용자 별 QuestionList 조회
+  /// params :
+  ///   - [userId] :
+  ///   - [count] : 조회 요청 개수 (default: 30)
+  ///   - [offset] : offset (default: 0)
+  /// return : [List<QuestionItem>]
   Future<List<QuestionItem>> readQuestionsByUser(String userId,
       {int count = 30, int offset = 0}) {
     return readQuestions(count: count, offset: offset, userId: userId);

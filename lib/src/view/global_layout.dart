@@ -153,7 +153,6 @@ class GlobalLayout extends StatelessWidget {
                   ),
           Expanded(
             child: Container(
-              constraints: BoxConstraints.tightFor(width: CONTENTS_MIN_WIDTH),
               child: WebNavigator(
                 key: _navigator,
                 initialRoute: route,
@@ -187,7 +186,6 @@ class GlobalLayout extends StatelessWidget {
                       );
                       maintainState = false;
                       break;
-
                     case ContentsDetailPage.routeNameArticle:
                       page = ContentsDetailPage.article(
                           queryObject['id'], settings.arguments);
@@ -196,20 +194,22 @@ class GlobalLayout extends StatelessWidget {
                       page = ContentsDetailPage.question(
                           queryObject['id'], settings.arguments);
                       break;
-                    case SignInPage.routeName:
-                      page = SignInPage();
-                      break;
                     case ContentsEditPage.routeNameArticle:
                       page = ContentsEditPage.article();
                       break;
                     case ContentsEditPage.routeNameQuestion:
                       page = ContentsEditPage.question();
                       break;
+                    case SignInPage.routeName:
+                      page = SignInPage();
+                      break;
+                    case UsersPage.routeName:
+                      page = UsersPage(query: queryObject);
+                      break;
                     default:
                       page = NotFoundPage();
                       break;
                   }
-
                   return NoTransitionPageRoute(
                     builder: (_) => Padding(
                       padding: const EdgeInsets.all(18.0),
