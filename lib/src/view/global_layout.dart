@@ -211,10 +211,7 @@ class GlobalLayout extends StatelessWidget {
                       break;
                   }
                   return NoTransitionPageRoute(
-                    builder: (_) => Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: page,
-                    ),
+                    builder: (_) => page,
                     settings: settings,
                     maintainState: maintainState,
                   );
