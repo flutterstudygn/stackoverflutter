@@ -364,25 +364,21 @@ class _SideMenuState extends State<_SideMenu> {
           context,
           'Home',
           HomePage.routeName,
-          isSelected: currentRoute == Navigator.defaultRouteName,
         ),
         _buildMenuItem(
           context,
           'Articles',
           ContentsListPage.routeNameArticles,
-          isSelected: currentRoute == ContentsListPage.routeNameArticles,
         ),
         _buildMenuItem(
           context,
           'Questions',
           ContentsListPage.routeNameQuestions,
-          isSelected: currentRoute == ContentsListPage.routeNameQuestions,
         ),
         _buildMenuItem(
           context,
           'About',
           '/about',
-          isSelected: currentRoute == '/about',
         ),
       ],
     );
@@ -391,9 +387,8 @@ class _SideMenuState extends State<_SideMenu> {
   Widget _buildMenuItem(
     BuildContext context,
     String text,
-    String path, {
-    bool isSelected,
-  }) {
+    String path,
+  ) {
     return InkWell(
       onTap: () {
         widget._navigator.currentState.pushNamed(path);
@@ -401,7 +396,9 @@ class _SideMenuState extends State<_SideMenu> {
       },
       child: Container(
         width: double.infinity,
-        color: isSelected ? Theme.of(context).dividerColor : Colors.transparent,
+        color: currentRoute == path
+            ? Theme.of(context).dividerColor
+            : Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
