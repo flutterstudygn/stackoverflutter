@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class NotFoundPage extends StatelessWidget {
-  static const String routeName = '/page_not_found';
-
   @override
   Widget build(BuildContext context) {
     return Center(
