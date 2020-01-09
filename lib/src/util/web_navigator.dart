@@ -101,14 +101,14 @@ class WebNavigator extends Navigator {
   }
 
   @optionalTypeArgs
-  static Future<bool> maybePop<T extends Object>(BuildContext context,
-      [T result]) {
-    return WebNavigator.of(context).maybePop<T>(result);
+  static Future<bool> maybePop<PopResult>(BuildContext context,
+      PopResult result) {
+    return WebNavigator.of(context).maybePop<PopResult>(result);
   }
 
   @optionalTypeArgs
-  static bool pop<T extends Object>(BuildContext context, [T result]) {
-    return WebNavigator.of(context).pop<T>(result);
+  static bool pop<PopResult>(BuildContext context, PopResult result) {
+    return WebNavigator.of(context).pop<PopResult>(result);
   }
 
   static void popUntil(BuildContext context, RoutePredicate predicate) {
@@ -135,9 +135,9 @@ class WebNavigator extends Navigator {
     assert(() {
       if (navigator == null && !nullOk) {
         throw FlutterError(
-            'Navigator operation requested with a context that does not include a Navigator.\n'
-            'The context used to push or pop routes from the Navigator must be that of a '
-            'widget that is a descendant of a Navigator widget.');
+            'WebNavigator operation requested with a context that does not include a WebNavigator.\n'
+            'The context used to push or pop routes from the WebNavigator must be that of a '
+            'widget that is a descendant of a WebNavigator widget.');
       }
       return true;
     }());
@@ -153,24 +153,23 @@ class WebNavigatorState extends NavigatorState {
 
   @override
   Future<T> push<T extends Object>(Route<T> route) {
+    // TODO: forward navigation일 때 pop stack에서 push 작업.
     if (_prevRoute == route.settings.name) return null;
     _prevRoute = route.settings.name;
     return super.push(route);
   }
+
+  @override
+  bool pop<PopResult>([PopResult result]) {
+    // TODO: backward navigation일 때 pop stack 작업.
+    return super.pop(result);
+  }
 }
 
-class BidirectionalRouteManager extends NavigatorObserver {
-  final Queue<Route> _backwardStack = Queue();
+class PopResult {
+  final dynamic arguments;
 
-  final Queue<Route> _forwardStack = Queue();
+  final Map<String, dynamic> state;
 
-  @override
-  void didPush(Route route, Route previousRoute) {
-    _backwardStack.addLast(previousRoute);
-  }
-
-  @override
-  void didPop(Route route, Route previousRoute) {
-    _forwardStack.addLast(_backwardStack.removeLast());
-  }
+  PopResult(this.arguments, this.state);
 }
