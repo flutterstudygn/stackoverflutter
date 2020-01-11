@@ -4,7 +4,7 @@ import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/model/user/user_item.dart';
 
-class ContentsDetailPage extends StatelessWidget {
+class ContentsDetailPage extends StatefulWidget {
   final ContentsType _contentsType;
   final String passedItemId;
   final ContentsItem passedItem;
@@ -30,10 +30,16 @@ class ContentsDetailPage extends StatelessWidget {
   }
 
   @override
+  _ContentsDetailPageState createState() => _ContentsDetailPageState();
+}
+
+class _ContentsDetailPageState extends State<ContentsDetailPage> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: Column(
         children: <Widget>[
+          Text(widget._contentsType == ContentsType.ARTICLE ? 'Article' : widget._contentsType == ContentsType.QUESTION ? 'Questions' : '-'),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -216,16 +222,16 @@ class ContentsDetailPage extends StatelessWidget {
 
               RaisedButton(
                 color: Colors.blueAccent,
-//                onPressed: () {
-//                  switch(widget._contentsType) {
-//                    case ContentsType.ARTICLE:
-////                      api.createArticle(item);
-//                      break;
-//                    case ContentsType.QUESTION:
-////                      api.createQuestion(item);
-//                      break;
-//                  }
-//                },
+                onPressed: () {
+                  switch(widget._contentsType) {
+                    case ContentsType.ARTICLE:
+//                      api.createArticle(item);
+                      break;
+                    case ContentsType.QUESTION:
+//                      api.createQuestion(item);
+                      break;
+                  }
+                },
                 textColor: Colors.white,
                 child: Text(
                   'SUBMIT',
