@@ -219,7 +219,6 @@ class GlobalLayout extends StatelessWidget {
                     maintainState: maintainState,
                   );
                 },
-                observers: [BidirectionalRouteManager()],
               ),
             ),
           ),
