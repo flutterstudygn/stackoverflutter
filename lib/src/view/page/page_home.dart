@@ -16,38 +16,42 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        PanelHeaderView(
-          title: 'Articles',
-          sideWidget: _buildShowMore(
-            context,
-            ContentsListPage.routeNameArticles,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(18.0),
+      scrollDirection: Axis.vertical,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          PanelHeaderView(
+            title: 'Articles',
+            sideWidget: _buildShowMore(
+              context,
+              ContentsListPage.routeNameArticles,
+            ),
           ),
-        ),
-        MinimizedContentsList(
-          ArticleItemView.builder,
-          'articles',
-          maxCount: 3,
-          separator: SizedBox(
-            height: 16,
+          MinimizedContentsList(
+            ArticleItemView.builder,
+            'articles',
+            maxCount: 3,
+            separator: SizedBox(height: 16),
+            scrollable: false,
           ),
-        ),
-        SizedBox(height: 18),
-        PanelHeaderView(
-          title: 'Questions',
-          sideWidget: _buildShowMore(
-            context,
-            ContentsListPage.routeNameQuestions,
+          SizedBox(height: 18),
+          PanelHeaderView(
+            title: 'Questions',
+            sideWidget: _buildShowMore(
+              context,
+              ContentsListPage.routeNameQuestions,
+            ),
           ),
-        ),
-        MinimizedContentsList(
-          QuestionItemView.builder,
-          'questions',
-          maxCount: 3,
-        ),
-      ],
+          MinimizedContentsList(
+            QuestionItemView.builder,
+            'questions',
+            maxCount: 3,
+            scrollable: false,
+          ),
+        ],
+      ),
     );
   }
 
