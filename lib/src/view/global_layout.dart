@@ -26,6 +26,8 @@ const double MENU_MIN_WIDTH = 200;
 class GlobalLayout extends StatelessWidget {
   final GlobalKey<WebNavigatorState> _navigator = GlobalKey();
 
+  final GlobalKey<_SideMenuState> _sideMenuKey = GlobalKey();
+
   final String route;
 
   final Color backgroundColor;
@@ -68,11 +70,19 @@ class GlobalLayout extends StatelessWidget {
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.arrow_back),
-              onPressed: () => _navigator.currentState.maybePop(),
+              onPressed: () {
+                _navigator.currentState.maybePop();
+                _sideMenuKey.currentState.currentRoute =
+                    _navigator.currentState.backwardRoute;
+              },
             ),
             IconButton(
               icon: Icon(Icons.arrow_forward),
-              onPressed: () => _navigator.currentState.pushForward(),
+              onPressed: () {
+                _sideMenuKey.currentState.currentRoute =
+                    _navigator.currentState.forwardRoute;
+                _navigator.currentState.pushForward();
+              },
             ),
             InkWell(
               onTap: () =>
@@ -142,7 +152,10 @@ class GlobalLayout extends StatelessWidget {
               elevation: 5.0,
               child: Padding(
                 padding: EdgeInsets.only(top: drawerPadding),
-                child: _SideMenu(_navigator),
+                child: _SideMenu(
+                  _navigator,
+                  key: _sideMenuKey,
+                ),
               ),
             )
           : null,
@@ -159,7 +172,10 @@ class GlobalLayout extends StatelessWidget {
                     ),
                     child: Container(
                       width: MENU_MIN_WIDTH,
-                      child: _SideMenu(_navigator),
+                      child: _SideMenu(
+                        _navigator,
+                        key: _sideMenuKey,
+                      ),
                     ),
                   )
                 : Container(
@@ -366,9 +382,13 @@ class _SideMenu extends StatefulWidget {
   State<StatefulWidget> createState() => _SideMenuState();
 }
 
-// TODO: GlobalLayout의 AppBar의 Navigation 버튼으로 라우팅시 메뉴 포커스 되지않는 부분 수정.
 class _SideMenuState extends State<_SideMenu> {
-  String currentRoute = Navigator.defaultRouteName;
+  String _currentRoute = Navigator.defaultRouteName;
+
+  set currentRoute(String route) {
+    if (route == null) return;
+    setState(() => _currentRoute = route);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -407,11 +427,11 @@ class _SideMenuState extends State<_SideMenu> {
     return InkWell(
       onTap: () {
         widget._navigator.currentState.pushNamed(path);
-        setState(() => currentRoute = path);
+        setState(() => _currentRoute = path);
       },
       child: Container(
         width: double.infinity,
-        color: currentRoute == path
+        color: _currentRoute == path
             ? Theme.of(context).dividerColor
             : Colors.transparent,
         child: Padding(

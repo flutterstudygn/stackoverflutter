@@ -156,7 +156,20 @@ class WebNavigator extends Navigator {
 
 class WebNavigatorState extends NavigatorState {
   final Queue<RouteSettings> _backwardSettingsStack = Queue();
+
   final Queue<RouteSettings> _forwardRouteSettingsStack = Queue();
+
+  String get backwardRoute {
+    if (_backwardSettingsStack.length == 1) return null;
+    return _backwardSettingsStack
+        .elementAt(_backwardSettingsStack.length - 2)
+        .name;
+  }
+
+  String get forwardRoute {
+    if (_forwardRouteSettingsStack.isEmpty) return null;
+    return _forwardRouteSettingsStack.last.name;
+  }
 
   @override
   Future<T> push<T extends Object>(Route<T> route) {
