@@ -82,6 +82,12 @@ class WebNavigator extends Navigator {
   }
 
   @optionalTypeArgs
+  static Future<T> pushForward<T extends Object>(
+      BuildContext context, RouteFactory routeFactory) {
+    return WebNavigator.of(context).pushForward();
+  }
+
+  @optionalTypeArgs
   static void replace<T extends Object>(BuildContext context,
       {@required Route<dynamic> oldRoute, @required Route<T> newRoute}) {
     return WebNavigator.of(context)
@@ -101,14 +107,14 @@ class WebNavigator extends Navigator {
   }
 
   @optionalTypeArgs
-  static Future<bool> maybePop<PopResult>(BuildContext context,
-      PopResult result) {
-    return WebNavigator.of(context).maybePop<PopResult>(result);
+  static Future<bool> maybePop<T extends Object>(BuildContext context,
+      [T result]) {
+    return WebNavigator.of(context).maybePop<T>(result);
   }
 
   @optionalTypeArgs
-  static bool pop<PopResult>(BuildContext context, PopResult result) {
-    return WebNavigator.of(context).pop<PopResult>(result);
+  static bool pop<T extends Object>(BuildContext context, [T result]) {
+    return WebNavigator.of(context).pop<T>(result);
   }
 
   static void popUntil(BuildContext context, RoutePredicate predicate) {
@@ -149,27 +155,42 @@ class WebNavigator extends Navigator {
 }
 
 class WebNavigatorState extends NavigatorState {
-  String _prevRoute;
+  final Queue<RouteSettings> _backwardSettingsStack = Queue();
+  final Queue<RouteSettings> _forwardRouteSettingsStack = Queue();
 
   @override
   Future<T> push<T extends Object>(Route<T> route) {
-    // TODO: forward navigation일 때 pop stack에서 push 작업.
-    if (_prevRoute == route.settings.name) return null;
-    _prevRoute = route.settings.name;
+    if (_backwardSettingsStack.isNotEmpty) {
+      if (_backwardSettingsStack.last.name == route.settings.name) return null;
+    }
+
+    _backwardSettingsStack.addLast(route.settings);
     return super.push(route);
   }
 
   @override
-  bool pop<PopResult>([PopResult result]) {
-    // TODO: backward navigation일 때 pop stack 작업.
+  bool pop<T>([T result]) {
+    _forwardRouteSettingsStack.addLast(_backwardSettingsStack.removeLast());
     return super.pop(result);
   }
-}
 
-class PopResult {
-  final dynamic arguments;
+  Future<T> pushForward<T extends Object>() {
+    if (_forwardRouteSettingsStack.isEmpty || widget.onGenerateRoute == null) {
+      return null;
+    }
 
-  final Map<String, dynamic> state;
+    Route route;
 
-  PopResult(this.arguments, this.state);
+    try {
+      route = widget.onGenerateRoute(_forwardRouteSettingsStack.removeLast());
+    } on FlutterError {
+      if (widget.onUnknownRoute != null) {
+        route = widget.onUnknownRoute(_forwardRouteSettingsStack.removeLast());
+      } else {
+        rethrow;
+      }
+    }
+
+    return push(route);
+  }
 }

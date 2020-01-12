@@ -25,8 +25,11 @@ const double MENU_MIN_WIDTH = 200;
 
 class GlobalLayout extends StatelessWidget {
   final GlobalKey<WebNavigatorState> _navigator = GlobalKey();
+
   final String route;
+
   final Color backgroundColor;
+
   final bool showMenu;
 
   GlobalLayout({
@@ -61,14 +64,25 @@ class GlobalLayout extends StatelessWidget {
       backgroundColor:
           backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: InkWell(
-          onTap: () {
-            _navigator.currentState.pushNamed('/');
-          },
-          child: Image.asset(
-            'assets/images/logo.png',
-            width: 120.0,
-          ),
+        title: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => _navigator.currentState.maybePop(),
+            ),
+            IconButton(
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () => _navigator.currentState.pushForward(),
+            ),
+            InkWell(
+              onTap: () =>
+                  _navigator.currentState.pushNamed(Navigator.defaultRouteName),
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: 120.0,
+              ),
+            ),
+          ],
         ),
         elevation: 0.25,
         automaticallyImplyLeading: isMobile,
@@ -210,6 +224,7 @@ class GlobalLayout extends StatelessWidget {
                       page = NotFoundPage();
                       break;
                   }
+
                   return NoTransitionPageRoute(
                     builder: (_) => page,
                     settings: settings,
@@ -351,6 +366,7 @@ class _SideMenu extends StatefulWidget {
   State<StatefulWidget> createState() => _SideMenuState();
 }
 
+// TODO: GlobalLayout의 AppBar의 Navigation 버튼으로 라우팅시 메뉴 포커스 되지않는 부분 수정.
 class _SideMenuState extends State<_SideMenu> {
   String currentRoute = Navigator.defaultRouteName;
 
