@@ -172,7 +172,12 @@ class WebNavigatorState extends NavigatorState {
   }
 
   @override
-  Future<T> push<T extends Object>(Route<T> route) {
+  Future<T> push<T extends Object>(
+    Route<T> route, {
+    bool forwardPushing = false,
+  }) {
+    if (!forwardPushing) _forwardRouteSettingsStack.clear();
+
     if (_backwardSettingsStack.isNotEmpty) {
       if (_backwardSettingsStack.last.name == route.settings.name) return null;
     }
@@ -204,6 +209,6 @@ class WebNavigatorState extends NavigatorState {
       }
     }
 
-    return push(route);
+    return push(route, forwardPushing: true);
   }
 }
