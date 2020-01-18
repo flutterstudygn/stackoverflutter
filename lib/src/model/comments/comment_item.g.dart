@@ -11,13 +11,12 @@ CommentItem _$CommentItemFromJson(Map<String, dynamic> json) {
     id: json['id'] as String,
     userId: json['userId'] as String,
     contentsId: json['contentsId'] as String,
+    contentsType:
+        _$enumDecodeNullable(_$ContentsTypeEnumMap, json['contentsType']),
     contents: json['contents'] as String,
-    createTime: json['createTime'] == null
-        ? null
-        : DateTime.parse(json['createTime'] as String),
+    createTime: parseDateTime(json['createTime'] as DateTime),
     likeCount: json['likeCount'] as int ?? 0,
-  )..contentsType =
-      _$enumDecodeNullable(_$ContentsTypeEnumMap, json['contentsType']);
+  );
 }
 
 Map<String, dynamic> _$CommentItemToJson(CommentItem instance) =>
@@ -26,7 +25,7 @@ Map<String, dynamic> _$CommentItemToJson(CommentItem instance) =>
       'userId': instance.userId,
       'contentsId': instance.contentsId,
       'contents': instance.contents,
-      'createTime': instance.createTime?.toIso8601String(),
+      'createTime': fromDateTime(instance.createTime),
       'contentsType': _$ContentsTypeEnumMap[instance.contentsType],
       'likeCount': instance.likeCount,
     };

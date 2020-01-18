@@ -58,6 +58,7 @@ class ContentsDetailBloc {
     _addViewCount();
     _loadIsLike(context);
     _loadUserDetail(value.userId);
+    loadComments();
   }
 
   dispose() {
@@ -82,7 +83,8 @@ class ContentsDetailBloc {
     return ContentsApi.instance
         .readComments(_contentsType, _itemId, offset: offset)
         .then((v) {
-      List<CommentItem> result = (_commentsStream.value ?? List())..addAll(v);
+      List<CommentItem> result = (_commentsStream.value ?? List<CommentItem>())
+        ..addAll(v);
       _commentsStream.add(result);
       return result;
     });
