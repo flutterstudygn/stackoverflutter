@@ -5,21 +5,17 @@ import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 class MinimizedContentsList extends StatelessWidget {
   final Widget Function(ContentsItem) _itemBuilder;
   final String _collectionName;
-  final EdgeInsets padding;
   final Widget separator;
   final int maxCount;
-  final bool scrollable;
 
   MinimizedContentsList(
     this._itemBuilder,
     this._collectionName, {
-    this.padding = EdgeInsets.zero,
     this.separator = const Divider(
       height: 0,
       thickness: 1,
     ),
     this.maxCount = 3,
-    this.scrollable = true,
   });
 
   @override
@@ -63,25 +59,11 @@ class MinimizedContentsList extends StatelessWidget {
             (i) => _itemBuilder(items[i]),
           );
 
-          if (scrollable) {
-            return Expanded(
-              child: ListView.separated(
-                padding: padding,
-                itemBuilder: (_, i) => children[i],
-                separatorBuilder: (_, __) => separator,
-                itemCount: children.length,
-              ),
-            );
-          }
-
           for (int i = 1; i < children.length; i += 2) {
             children.insert(i, separator);
           }
 
-          return Padding(
-            padding: padding,
-            child: Column(children: children),
-          );
+          return Column(children: children);
         }
 
         return Padding(

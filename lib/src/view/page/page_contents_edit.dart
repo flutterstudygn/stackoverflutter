@@ -1,28 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 
+import 'package:provider/provider.dart';
+import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
+import 'package:stackoverflutter/src/model/user/user_item.dart';
+
+
+
 class ContentsEditPage extends StatefulWidget {
+
   final ContentsType _contentsType;
   final String passedItemId;
   final ContentsItem passedItem;
 
   const ContentsEditPage(
-    this._contentsType, {
-    this.passedItemId,
-    this.passedItem,
-    Key key,
-  }) : super(key: key);
+      this._contentsType, {
+        this.passedItemId,
+        this.passedItem,
+        Key key,
+      }) : super(key: key);
 
   static const String routeNameArticle = '/articles/edit';
   static const String routeNameQuestion = '/questions/edit';
 
+
   factory ContentsEditPage.article() {
     return ContentsEditPage(ContentsType.ARTICLE);
   }
-
   factory ContentsEditPage.question() {
     return ContentsEditPage(ContentsType.QUESTION);
   }
+
+
 
   @override
   ContentsEditPageState createState() => ContentsEditPageState();
@@ -46,18 +55,12 @@ class ContentsEditPageState extends State<ContentsEditPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(18.0),
+      padding: EdgeInsets.all(15.0),
+      margin: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            widget._contentsType == ContentsType.ARTICLE
-                ? 'Article'
-                : widget._contentsType == ContentsType.QUESTION
-                    ? 'Questions'
-                    : '-',
-            style: Theme.of(context).textTheme.title,
-          ),
+          Text(widget._contentsType == ContentsType.ARTICLE ? 'Article' : widget._contentsType == ContentsType.QUESTION ? 'Questions' : '-'),
           Padding(
             padding: EdgeInsets.all(8.0),
           ),
@@ -90,7 +93,7 @@ class ContentsEditPageState extends State<ContentsEditPage> {
               maxLines: null,
               //controller: _textController,
               decoration: InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 20),
+                contentPadding: EdgeInsets.symmetric(vertical: 20),
                   border: OutlineInputBorder(),
                   hintText: 'Enter contents'),
             ),
@@ -107,7 +110,7 @@ class ContentsEditPageState extends State<ContentsEditPage> {
           TextField(
             //controller: _textController,
             decoration:
-                InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
+            InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
           ),
           SizedBox(height: 10),
           Row(
@@ -116,7 +119,7 @@ class ContentsEditPageState extends State<ContentsEditPage> {
               RaisedButton(
                 color: Colors.blueAccent,
                 onPressed: () {
-                  switch (widget._contentsType) {
+                  switch(widget._contentsType) {
                     case ContentsType.ARTICLE:
 //                      api.createArticle(item);
                       break;

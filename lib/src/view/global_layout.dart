@@ -242,7 +242,10 @@ class GlobalLayout extends StatelessWidget {
                   }
 
                   return NoTransitionPageRoute(
-                    builder: (_) => page,
+                    builder: (_) => Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: page,
+                    ),
                     settings: settings,
                     maintainState: maintainState,
                   );
@@ -253,6 +256,65 @@ class GlobalLayout extends StatelessWidget {
           if (hasSideExtra)
             Container(width: menuWidth, child: _buildSideExtra())
         ],
+      ),
+    );
+  }
+
+  Widget _buildMenuLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        _buildMenuItem(
+          context,
+          'Home',
+          HomePage.routeName,
+          isSelected: route == Navigator.defaultRouteName,
+        ),
+        _buildMenuItem(
+          context,
+          'Articles',
+          ContentsListPage.routeNameArticles,
+        ),
+        _buildMenuItem(
+          context,
+          'Questions',
+          ContentsListPage.routeNameQuestions,
+        ),
+        _buildMenuItem(
+          context,
+          'About',
+          '/about',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context,
+    String text,
+    String path, {
+    bool isSelected,
+  }) {
+    return InkWell(
+      onTap: () {
+        if (path?.isNotEmpty == true) {
+          _navigator.currentState.pushNamed(path);
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        color: isSelected ?? this.route?.startsWith(path) == true
+            ? Theme.of(context).dividerColor
+            : Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ),
     );
   }

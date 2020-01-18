@@ -7,7 +7,6 @@ import 'package:stackoverflutter/src/view/component/contents/view_minimized_cont
 import 'package:stackoverflutter/src/view/component/contents/view_question_item.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 import 'package:stackoverflutter/src/view/page/page_contents_edit.dart';
-import 'package:stackoverflutter/src/view/page/page_not_found.dart';
 
 class ContentsListPage extends StatelessWidget {
   static const String routeNameArticles = '/articles';
@@ -18,19 +17,14 @@ class ContentsListPage extends StatelessWidget {
   /// 인자는 서버로부터 받아오는 arguments object.
   final Widget Function(ContentsItem) _itemBuilder;
   final String _route;
-  final String title;
   final int maxCount;
-  final Widget separator;
+  final ContentsType contentsType;
 
   ContentsListPage(
     this._route,
     this._itemBuilder, {
-    this.title = '',
     this.maxCount = 30,
-    this.separator = const Divider(
-      height: 0,
-      thickness: 1,
-    ),
+    this.contentsType,
   });
 
   factory ContentsListPage.articles({Map<String, String> queryObject}) =>
@@ -39,63 +33,56 @@ class ContentsListPage extends StatelessWidget {
             ? routeNameArticles
             : routeNameArticles + QueryBuilder.encode(queryObject),
         ArticleItemView.builder,
-        title: 'Articles',
-        separator: SizedBox(height: 16),
+        contentsType: ContentsType.ARTICLE,
       );
+
 
   factory ContentsListPage.questions({Map<String, String> queryObject}) =>
       ContentsListPage(
-          queryObject == null
-              ? routeNameQuestions
-              : routeNameQuestions + QueryBuilder.encode(queryObject),
-          QuestionItemView.builder,
-          title: 'Questions');
+        queryObject == null
+            ? routeNameQuestions
+            : routeNameQuestions + QueryBuilder.encode(queryObject),
+        QuestionItemView.builder,
+        contentsType: ContentsType.QUESTION,
+      );
 
   @override
   Widget build(BuildContext context) {
-    final Set<String> splits = _route.split('?').toSet();
-    final String route = splits.first;
-    final Map<String, String> query = QueryBuilder.decode(splits.last);
-
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 18, top: 18, right: 18),
-            child: PanelHeaderView(title: title),
+    String title = '';
+    switch (this.contentsType) {
+      case ContentsType.ARTICLE:
+        title = 'Articles';
+        break;
+      case ContentsType.QUESTION:
+        title = 'Questions';
+        break;
+    }
+    return Column(
+      children: <Widget>[
+        PanelHeaderView(
+          title: title,
+          sideWidget: IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              switch (this.contentsType) {
+                case ContentsType.ARTICLE:
+                  WebNavigator.of(context)
+                      .pushNamed(ContentsEditPage.routeNameArticle);
+                  break;
+                case ContentsType.QUESTION:
+                  WebNavigator.of(context)
+                      .pushNamed(ContentsEditPage.routeNameQuestion);
+                  break;
+              }
+            },
           ),
-          MinimizedContentsList(
-            _itemBuilder,
-            title.toLowerCase(),
-            maxCount: maxCount,
-            separator: separator,
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        elevation: 4,
-        onPressed: () {
-          switch (route) {
-            case ContentsListPage.routeNameArticles:
-              WebNavigator.of(context).pushNamed(
-                ContentsEditPage.routeNameArticle,
-                arguments: query,
-              );
-              break;
-            case ContentsListPage.routeNameQuestions:
-              WebNavigator.of(context).pushNamed(
-                ContentsEditPage.routeNameQuestion,
-                arguments: query,
-              );
-              break;
-            default:
-              WebNavigator.of(context).pushNamed(NotFoundPage.routeName);
-              break;
-          }
-        },
-        child: Icon(Icons.edit),
-      ),
+        ),
+        MinimizedContentsList(
+          _itemBuilder,
+          title.toLowerCase(),
+          maxCount: maxCount,
+        ),
+      ],
     );
   }
 }
