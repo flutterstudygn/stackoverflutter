@@ -19,7 +19,7 @@ class UserApi {
     }
 
     if (snapshot.exists) {
-      return UserItem.fromJson(snapshot.data())..id = snapshot.id;
+      return UserItem.fromJson(snapshot.data())..userId = snapshot.id;
     } else {
       throw Exception('Firestore snapshot for user id = $uid doesn\'t exists.');
     }
@@ -28,7 +28,7 @@ class UserApi {
   Future<UserItem> createUser(UserItem userItem) {
     return firestore()
         .collection('users')
-        .doc(userItem.id)
+        .doc(userItem.userId)
         .set(userItem.toJson())
         .then((_) {
       return userItem;
