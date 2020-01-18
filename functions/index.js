@@ -49,3 +49,40 @@ exports.onQuestionsChildUpdate = functions.firestore
         }
       });
   });
+
+
+exports.onArticlesCommentLikesUpdate = functions.firestore
+  .document('articles/{articleId}/comments/{commentId}/likes/{likeId}')
+  .onWrite((change, context) => {
+    const db = admin
+      .firestore()
+      .collection('articles/' + context.params.articleId + '/comments')
+      .doc(context.params.commentId);
+    db.collection('likes')
+      .get()
+      .then(snapshot => {
+        const count =
+          snapshot && snapshot.size && !isNaN(snapshot.size)
+            ? snapshot.size
+            : 0;
+        db.update({ likeCount: count });
+      });
+  });
+
+exports.onQuestionsCommentLikesUpdate = functions.firestore
+  .document('questions/{questionId}/comments/{commentId}/likes/{likeId}')
+  .onWrite((change, context) => {
+    const db = admin
+      .firestore()
+      .collection('questions/' + context.params.questionId + '/comments')
+      .doc(context.params.commentId);
+    db.collection('likes')
+      .get()
+      .then(snapshot => {
+        const count =
+          snapshot && snapshot.size && !isNaN(snapshot.size)
+            ? snapshot.size
+            : 0;
+        db.update({ likeCount: count });
+      });
+  });
