@@ -25,8 +25,13 @@ const double MENU_MIN_WIDTH = 200;
 
 class GlobalLayout extends StatelessWidget {
   final GlobalKey<WebNavigatorState> _navigator = GlobalKey();
+
+  final GlobalKey<_SideMenuState> _sideMenuKey = GlobalKey();
+
   final String route;
+
   final Color backgroundColor;
+
   final bool showMenu;
 
   GlobalLayout({
@@ -61,14 +66,33 @@ class GlobalLayout extends StatelessWidget {
       backgroundColor:
           backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: InkWell(
-          onTap: () {
-            _navigator.currentState.pushNamed('/');
-          },
-          child: Image.asset(
-            'assets/images/logo.png',
-            width: 120.0,
-          ),
+        title: Row(
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                _navigator.currentState.maybePop();
+                _sideMenuKey.currentState.currentRoute =
+                    _navigator.currentState.backwardRoute;
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () {
+                _sideMenuKey.currentState.currentRoute =
+                    _navigator.currentState.forwardRoute;
+                _navigator.currentState.pushForward();
+              },
+            ),
+            InkWell(
+              onTap: () =>
+                  _navigator.currentState.pushNamed(Navigator.defaultRouteName),
+              child: Image.asset(
+                'assets/images/logo.png',
+                width: 120.0,
+              ),
+            ),
+          ],
         ),
         elevation: 0.25,
         automaticallyImplyLeading: isMobile,
@@ -128,7 +152,10 @@ class GlobalLayout extends StatelessWidget {
               elevation: 5.0,
               child: Padding(
                 padding: EdgeInsets.only(top: drawerPadding),
-                child: _buildMenuLayout(context),
+                child: _SideMenu(
+                  _navigator,
+                  key: _sideMenuKey,
+                ),
               ),
             )
           : null,
@@ -145,7 +172,10 @@ class GlobalLayout extends StatelessWidget {
                     ),
                     child: Container(
                       width: MENU_MIN_WIDTH,
-                      child: _buildMenuLayout(context),
+                      child: _SideMenu(
+                        _navigator,
+                        key: _sideMenuKey,
+                      ),
                     ),
                   )
                 : Container(
@@ -210,6 +240,7 @@ class GlobalLayout extends StatelessWidget {
                       page = NotFoundPage();
                       break;
                   }
+
                   return NoTransitionPageRoute(
                     builder: (_) => Padding(
                       padding: const EdgeInsets.all(18.0),
@@ -219,7 +250,6 @@ class GlobalLayout extends StatelessWidget {
                     maintainState: maintainState,
                   );
                 },
-                observers: [BidirectionalRouteManager()],
               ),
             ),
           ),
@@ -401,6 +431,81 @@ class GlobalLayout extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _SideMenu extends StatefulWidget {
+  final GlobalKey<WebNavigatorState> _navigator;
+
+  const _SideMenu(this._navigator, {Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _SideMenuState();
+}
+
+class _SideMenuState extends State<_SideMenu> {
+  String _currentRoute = Navigator.defaultRouteName;
+
+  set currentRoute(String route) {
+    if (route == null) return;
+    setState(() => _currentRoute = route);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: <Widget>[
+        _buildMenuItem(
+          context,
+          'Home',
+          HomePage.routeName,
+        ),
+        _buildMenuItem(
+          context,
+          'Articles',
+          ContentsListPage.routeNameArticles,
+        ),
+        _buildMenuItem(
+          context,
+          'Questions',
+          ContentsListPage.routeNameQuestions,
+        ),
+        _buildMenuItem(
+          context,
+          'About',
+          '/about',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem(
+    BuildContext context,
+    String text,
+    String path,
+  ) {
+    return InkWell(
+      onTap: () {
+        widget._navigator.currentState.pushNamed(path);
+        setState(() => _currentRoute = path);
+      },
+      child: Container(
+        width: double.infinity,
+        color: _currentRoute == path
+            ? Theme.of(context).dividerColor
+            : Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Page navigation시 transition 없이 전환하는 Route.
 class NoTransitionPageRoute extends MaterialPageRoute {
   NoTransitionPageRoute({
     @required WidgetBuilder builder,
