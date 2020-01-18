@@ -59,6 +59,18 @@ class ContentsApi {
     }).catchError((_) => null);
   }
 
+  /// deleteArticle : question item 삭제
+  /// params :
+  ///   - [item] :
+  Future<bool> deleteArticle(String articleId) {
+    return firestore()
+        .collection('articles')
+        .doc(articleId)
+        .delete()
+        .then((_) => true)
+        .catchError((_) => false);
+  }
+
   /// readArticleById : Article 정보 조회
   /// (See: [ContentsApi.readQuestionById])
   /// params :
@@ -127,6 +139,18 @@ class ContentsApi {
         .then((v) {
       return item;
     }).catchError((_) => null);
+  }
+
+  /// deleteQuestion : question item 삭제
+  /// params :
+  ///   - [item] :
+  Future<bool> deleteQuestion(String questionId) {
+    return firestore()
+        .collection('questions')
+        .doc(questionId)
+        .delete()
+        .then((_) => true)
+        .catchError((_) => false);
   }
 
   /// readQuestionById : Question 정보 조회
@@ -280,5 +304,44 @@ class ContentsApi {
         .delete()
         .then((_) => true)
         .catchError((_) => false);
+  }
+
+  Future<bool> toggleLikeComment(
+    ContentsType type,
+    String itemId,
+    String commentId,
+    String userId,
+    bool currentState,
+  ) async {
+    String collection = _getCollection(type);
+    if (collection == null ||
+        itemId?.isNotEmpty != true ||
+        userId?.isNotEmpty != true ||
+        currentState == null) return null;
+
+    CollectionReference ref =
+        firestore().collection('$collection/$itemId/comments/$commentId/likes');
+
+    if (currentState == false) {
+      return ref.doc(userId).set({'userId': userId}).then((_) => true);
+    } else if (currentState == true) {
+      return ref.doc(userId).delete().then((_) => false);
+    }
+    return null;
+  }
+
+  Future<bool> readIsLikeComment(
+    ContentsType type,
+    String itemId,
+    String commentId,
+    String userId,
+  ) async {
+    String collection = _getCollection(type);
+    if (collection == null) return null;
+    CollectionReference ref =
+        firestore().collection('$collection/$itemId/comments/$commentId/likes');
+    return ref.doc(userId).get().then((v) {
+      return v.exists;
+    });
   }
 }
