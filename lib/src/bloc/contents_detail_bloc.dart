@@ -93,9 +93,9 @@ class ContentsDetailBloc {
   Future<bool> _loadIsLike(BuildContext context) async {
     UserItem user =
         Provider.of<SessionBloc>(context, listen: false).currentUser;
-    if (user?.id?.isNotEmpty == true) {
+    if (user?.userId?.isNotEmpty == true) {
       return ContentsApi.instance
-          .readIsLike(_contentsType, _itemId, user.id)
+          .readIsLike(_contentsType, _itemId, user.userId)
           .then((v) {
         _isLikeStream.add(v);
         return v;
@@ -108,10 +108,10 @@ class ContentsDetailBloc {
   Future<bool> toggleLike(BuildContext context) {
     UserItem user =
         Provider.of<SessionBloc>(context, listen: false).currentUser;
-    if (user?.id?.isNotEmpty == true) {
+    if (user?.userId?.isNotEmpty == true) {
       return ContentsApi.instance
           .toggleLikeContents(
-              _contentsType, _itemId, user.id, _isLikeStream.value)
+              _contentsType, _itemId, user.userId, _isLikeStream.value)
           .then((v) {
         _isLikeStream.add(v);
         return v;

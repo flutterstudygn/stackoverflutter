@@ -196,7 +196,7 @@ class ContentsApi {
         firestore().collection('$collection/$itemId/likes');
 
     if (currentState == false) {
-      return ref.doc(userId).set({'b': true}).then((_) => true);
+      return ref.doc(userId).set({'userId': userId}).then((_) => true);
     } else if (currentState == true) {
       return ref.doc(userId).delete().then((_) => false);
     }

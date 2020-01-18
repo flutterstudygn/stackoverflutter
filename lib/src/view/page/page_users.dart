@@ -38,7 +38,7 @@ class UsersPage extends StatelessWidget {
 
         if (snapshot.connectionState == ConnectionState.done) {
           return Provider<UserDetailBloc>(
-            create: (_) => UserDetailBloc()..init(snapshot.data.id),
+            create: (_) => UserDetailBloc()..init(snapshot.data.userId),
             dispose: (_, bloc) => bloc.dispose(),
             child: Consumer<UserDetailBloc>(
               builder: (ctx, bloc, _) {
@@ -58,13 +58,13 @@ class UsersPage extends StatelessWidget {
                     SizedBox(height: 18),
                     LimitedContentsListPanel(
                       stream: bloc.articles,
-                      query: ContentsQueryItem(uid: snapshot.data.id),
+                      query: ContentsQueryItem(uid: snapshot.data.userId),
                       type: ContentsType.ARTICLE,
                     ),
                     SizedBox(height: 18),
                     LimitedContentsListPanel(
                       stream: bloc.questions,
-                      query: ContentsQueryItem(uid: snapshot.data.id),
+                      query: ContentsQueryItem(uid: snapshot.data.userId),
                       type: ContentsType.QUESTION,
                     ),
                   ],

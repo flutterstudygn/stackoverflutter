@@ -107,7 +107,7 @@ class GlobalLayout extends StatelessWidget {
                     onSelected: (v) async {
                       switch (v) {
                         case 'profile':
-                          if (sessionBloc.currentUser?.id != null) {
+                          if (sessionBloc.currentUser?.userId != null) {
                             _navigator.currentState.pushNamed(
                               UsersPage.routeName,
                               arguments: sessionBloc.currentUser,

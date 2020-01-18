@@ -8,7 +8,6 @@ part of 'user_detail_item.dart';
 
 UserDetailItem _$UserDetailItemFromJson(Map<String, dynamic> json) {
   return UserDetailItem(
-    id: json['id'] as String,
     name: json['name'] as String,
     description: json['description'] as String,
     imageUrl: json['imageUrl'] as String,
@@ -17,12 +16,12 @@ UserDetailItem _$UserDetailItemFromJson(Map<String, dynamic> json) {
     questionCount: json['questionCount'] as int,
     answerCount: json['answerCount'] as int,
     startCount: json['startCount'] as int,
-  );
+  )..userId = json['userId'] as String;
 }
 
 Map<String, dynamic> _$UserDetailItemToJson(UserDetailItem instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'userId': instance.userId,
       'name': instance.name,
       'description': instance.description,
       'imageUrl': instance.imageUrl,

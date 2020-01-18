@@ -11,7 +11,7 @@ class UserDetailItem extends UserItem {
   int startCount;
 
   UserDetailItem({
-    String id,
+    String userId,
     String name,
     String description,
     String imageUrl,
@@ -21,7 +21,7 @@ class UserDetailItem extends UserItem {
     this.answerCount,
     this.startCount,
   }) : super(
-          id: id,
+          userId: userId,
           name: name,
           description: description,
           imageUrl: imageUrl,

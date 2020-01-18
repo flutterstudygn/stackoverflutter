@@ -5,14 +5,14 @@ part 'user_item.g.dart';
 
 @JsonSerializable()
 class UserItem {
-  String id;
+  String userId;
   String name;
   String description;
   String imageUrl;
   String email;
 
   UserItem({
-    this.id,
+    this.userId,
     this.name,
     this.description,
     this.imageUrl,
@@ -23,7 +23,7 @@ class UserItem {
       _$UserItemFromJson(json);
   factory UserItem.firebaseUser(User fbUser) {
     return UserItem(
-      id: fbUser?.uid,
+      userId: fbUser?.uid,
       name: fbUser?.displayName,
       email: fbUser?.email,
       imageUrl: fbUser?.photoURL,
@@ -38,6 +38,6 @@ class UserItem {
 
   @override
   String toString() {
-    return 'UserItem{id: $id, name: $name, description: $description, imageUrl: $imageUrl, email: $email}';
+    return 'UserItem{id: $userId, name: $name, description: $description, imageUrl: $imageUrl, email: $email}';
   }
 }
