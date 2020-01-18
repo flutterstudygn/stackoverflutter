@@ -2,6 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 
+/// Web환경에 맞는 Navigating을 구현한 [Navigator]
+///
+/// [Navigator]를 상속하며 [Navigator]의 static 함수를 따라서 구현.
 class WebNavigator extends Navigator {
   const WebNavigator({
     Key key,
@@ -82,6 +85,12 @@ class WebNavigator extends Navigator {
   }
 
   @optionalTypeArgs
+  static Future<T> pushForward<T extends Object>(
+      BuildContext context, RouteFactory routeFactory) {
+    return WebNavigator.of(context).pushForward();
+  }
+
+  @optionalTypeArgs
   static void replace<T extends Object>(BuildContext context,
       {@required Route<dynamic> oldRoute, @required Route<T> newRoute}) {
     return WebNavigator.of(context)
@@ -135,9 +144,9 @@ class WebNavigator extends Navigator {
     assert(() {
       if (navigator == null && !nullOk) {
         throw FlutterError(
-            'Navigator operation requested with a context that does not include a Navigator.\n'
-            'The context used to push or pop routes from the Navigator must be that of a '
-            'widget that is a descendant of a Navigator widget.');
+            'WebNavigator operation requested with a context that does not include a WebNavigator.\n'
+            'The context used to push or pop routes from the WebNavigator must be that of a '
+            'widget that is a descendant of a WebNavigator widget.');
       }
       return true;
     }());
@@ -148,29 +157,86 @@ class WebNavigator extends Navigator {
   WebNavigatorState createState() => WebNavigatorState();
 }
 
+/// [WebNavigator]의 State.
+///
+/// Forward, backward navigating을 구현.
 class WebNavigatorState extends NavigatorState {
-  String _prevRoute;
+  /// backward page들의 stack.
+  ///
+  /// [pushForward]시 [_forwardRouteSettingsStack]에 넘겨줄 [RouteSettings]를 가짐.
+  final Queue<RouteSettings> _backwardSettingsStack = Queue();
 
+  /// forward page들의 stack.
+  ///
+  /// [pushForward]시 Navigating할 [RouteSettings]를 가짐.
+  final Queue<RouteSettings> _forwardRouteSettingsStack = Queue();
+
+  /// 현재 Route를 기준으로 전 route를 내보냄.
+  String get backwardRoute {
+    // 마지막 _backwardSettingsStack 마지막 item은 현재 route.
+    if (_backwardSettingsStack.length == 1) return null;
+
+    return _backwardSettingsStack
+        .elementAt(_backwardSettingsStack.length - 2)
+        .name;
+  }
+
+  /// 현재 Route를 기준으로 후 route를 내보냄.
+  String get forwardRoute {
+    if (_forwardRouteSettingsStack.isEmpty) return null;
+
+    return _forwardRouteSettingsStack.last.name;
+  }
+
+  /// [Navigator.push]와 같은 동작을 하나 Web환경에 필요한 기능을 추가.
+  ///
+  /// 같은 route가 push될 경우 무시.
+  /// Forward pushing이 아닐 경우 forward stack을 초기화하여 forward navigation을 방지.
+  /// Backward route stack 관리.
   @override
-  Future<T> push<T extends Object>(Route<T> route) {
-    if (_prevRoute == route.settings.name) return null;
-    _prevRoute = route.settings.name;
+  Future<T> push<T extends Object>(
+    Route<T> route, {
+    bool forwardPushing = false,
+  }) {
+    if (!forwardPushing) _forwardRouteSettingsStack.clear();
+
+    if (_backwardSettingsStack.isNotEmpty) {
+      if (_backwardSettingsStack.last.name == route.settings.name) return null;
+    }
+
+    _backwardSettingsStack.addLast(route.settings);
+
     return super.push(route);
   }
-}
 
-class BidirectionalRouteManager extends NavigatorObserver {
-  final Queue<Route> _backwardStack = Queue();
-
-  final Queue<Route> _forwardStack = Queue();
-
+  /// [Navigator.pop]와 같은 동작을 하나 Web환경에 필요한 기능을 추가.
+  ///
+  /// Backward, forward route stack 관리.
   @override
-  void didPush(Route route, Route previousRoute) {
-    _backwardStack.addLast(previousRoute);
+  bool pop<T>([T result]) {
+    _forwardRouteSettingsStack.addLast(_backwardSettingsStack.removeLast());
+
+    return super.pop(result);
   }
 
-  @override
-  void didPop(Route route, Route previousRoute) {
-    _forwardStack.addLast(_backwardStack.removeLast());
+  /// Web 브라우저의 forward navigation 구현.
+  Future<T> pushForward<T extends Object>() {
+    if (_forwardRouteSettingsStack.isEmpty || widget.onGenerateRoute == null) {
+      return null;
+    }
+
+    Route route;
+
+    try {
+      route = widget.onGenerateRoute(_forwardRouteSettingsStack.removeLast());
+    } on FlutterError {
+      if (widget.onUnknownRoute != null) {
+        route = widget.onUnknownRoute(_forwardRouteSettingsStack.removeLast());
+      } else {
+        rethrow;
+      }
+    }
+
+    return push(route, forwardPushing: true);
   }
 }
