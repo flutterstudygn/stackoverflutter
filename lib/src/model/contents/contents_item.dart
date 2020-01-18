@@ -1,3 +1,4 @@
+import 'package:firebase/firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'contents_item.g.dart';
@@ -30,10 +31,18 @@ class ContentsItem {
     this.likeCount,
   });
 
+  factory ContentsItem.create(String userId, String title, String contents) {
+    return ContentsItem(userId: userId, title: title, contents: contents);
+  }
+
   factory ContentsItem.fromJson(Map<String, dynamic> json) =>
       _$ContentsItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$ContentsItemToJson(this);
+  Map<String, dynamic> request() => toJson()
+    ..remove('id')
+    ..removeWhere((k, v) => v == null)
+    ..putIfAbsent('createTime', () => FieldValue.serverTimestamp());
 
   ContentsItem clone() {
     return ContentsItem.fromJson(this.toJson());
