@@ -154,6 +154,7 @@ class GlobalLayout extends StatelessWidget {
                 padding: EdgeInsets.only(top: drawerPadding),
                 child: _SideMenu(
                   _navigator,
+                  fromDrawer: true,
                   key: _sideMenuKey,
                 ),
               ),
@@ -256,65 +257,6 @@ class GlobalLayout extends StatelessWidget {
           if (hasSideExtra)
             Container(width: menuWidth, child: _buildSideExtra())
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuLayout(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: <Widget>[
-        _buildMenuItem(
-          context,
-          'Home',
-          HomePage.routeName,
-          isSelected: route == Navigator.defaultRouteName,
-        ),
-        _buildMenuItem(
-          context,
-          'Articles',
-          ContentsListPage.routeNameArticles,
-        ),
-        _buildMenuItem(
-          context,
-          'Questions',
-          ContentsListPage.routeNameQuestions,
-        ),
-        _buildMenuItem(
-          context,
-          'About',
-          '/about',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(
-    BuildContext context,
-    String text,
-    String path, {
-    bool isSelected,
-  }) {
-    return InkWell(
-      onTap: () {
-        if (path?.isNotEmpty == true) {
-          _navigator.currentState.pushNamed(path);
-        }
-      },
-      child: Container(
-        width: double.infinity,
-        color: isSelected ?? this.route?.startsWith(path) == true
-            ? Theme.of(context).dividerColor
-            : Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -437,8 +379,10 @@ class GlobalLayout extends StatelessWidget {
 
 class _SideMenu extends StatefulWidget {
   final GlobalKey<WebNavigatorState> _navigator;
+  final bool fromDrawer;
 
-  const _SideMenu(this._navigator, {Key key}) : super(key: key);
+  const _SideMenu(this._navigator, {Key key, this.fromDrawer = false})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _SideMenuState();
@@ -488,6 +432,7 @@ class _SideMenuState extends State<_SideMenu> {
   ) {
     return InkWell(
       onTap: () {
+        if (widget.fromDrawer == true) Navigator.of(context).pop();
         widget._navigator.currentState.pushNamed(path);
         setState(() => _currentRoute = path);
       },
