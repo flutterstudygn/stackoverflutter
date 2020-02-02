@@ -19,14 +19,13 @@ exports.onArticlesChildUpdate = functions.firestore
           snapshot && snapshot.size && !isNaN(snapshot.size)
             ? snapshot.size
             : 0;
-        if(context.params.type == 'comments') {
-            db.update({ commentCount: count });
-        } else if(context.params.type == 'likes') {
-            db.update({ likeCount: count });
+        if (context.params.type == 'comments') {
+          db.update({ commentCount: count });
+        } else if (context.params.type == 'likes') {
+          db.update({ likeCount: count });
         }
       });
   });
-
 
 exports.onQuestionsChildUpdate = functions.firestore
   .document('questions/{articleId}/{type}/{itemId}')
@@ -42,14 +41,13 @@ exports.onQuestionsChildUpdate = functions.firestore
           snapshot && snapshot.size && !isNaN(snapshot.size)
             ? snapshot.size
             : 0;
-        if(context.params.type == 'comments') {
-            db.update({ commentCount: count });
-        } else if(context.params.type == 'likes') {
-            db.update({ likeCount: count });
+        if (context.params.type == 'comments') {
+          db.update({ commentCount: count });
+        } else if (context.params.type == 'likes') {
+          db.update({ likeCount: count });
         }
       });
   });
-
 
 exports.onArticlesCommentLikesUpdate = functions.firestore
   .document('articles/{articleId}/comments/{commentId}/likes/{likeId}')
@@ -86,3 +84,24 @@ exports.onQuestionsCommentLikesUpdate = functions.firestore
         db.update({ likeCount: count });
       });
   });
+
+exports.addViewCount = functions.https.onRequest((req, res) => {
+  try {
+    const contentsType = req.query['type'];
+    const contentsId = req.query['id'];
+
+    if (
+      (contentsType === 'articles' || contentsType === 'questions') &&
+      contentsId !== null
+    ) {
+      const db = admin
+        .firestore()
+        .collection(contentsType)
+        .doc(contentsId)
+        .update({ viewCount: admin.firestore.FieldValue.increment(1) });
+    }
+  } catch (_) {
+  } finally {
+    res.end();
+  }
+});

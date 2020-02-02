@@ -5,6 +5,8 @@ import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/model/contents/question_item.dart';
 
+import 'package:http/http.dart' as http;
+
 class ContentsApi {
   ContentsApi._() : super();
   static ContentsApi _instance;
@@ -33,6 +35,9 @@ class ContentsApi {
   void addViewCount(ContentsType contentsType, String contentsId) {
     String collection = _getCollection(contentsType);
     if (collection == null || contentsId?.isNotEmpty != true) return null;
+    String baseUrl =
+        'https://us-central1-stackoverflutter-78df8.cloudfunctions.net/addViewCount';
+    http.Client().get('$baseUrl?type=$collection&id=$contentsId');
 //    firestore().collection(collection).doc(id).update()
   }
 
