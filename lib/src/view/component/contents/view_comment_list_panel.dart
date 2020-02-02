@@ -5,6 +5,7 @@ import 'package:stackoverflutter/src/bloc/session_bloc.dart';
 import 'package:stackoverflutter/src/model/comments/comment_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_comment_list.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_markdown.dart';
 import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
 
 class CommentListPanel extends StatelessWidget {
@@ -158,20 +159,9 @@ class _CommentEditorState extends State<CommentEditor> {
         true;
     return Column(
       children: <Widget>[
-        TextField(
-          textAlign: TextAlign.left,
-          keyboardType: TextInputType.multiline,
-          maxLines: null,
+        MarkdownView(
           controller: _textController,
-          enabled: _isSignedIn,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 20,
-              horizontal: 8.0,
-            ),
-            border: OutlineInputBorder(),
-            hintText: _isSignedIn ? 'Enter contents' : 'Please sign in first.',
-          ),
+          hintText: _isSignedIn ? 'Enter contents' : 'Please sign in first.',
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
