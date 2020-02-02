@@ -22,6 +22,7 @@ class ArticleItem extends ContentsItem {
         );
 
   factory ArticleItem.fromContents(ContentsItem contents) {
+    if (contents == null) return null;
     return ArticleItem(
       id: contents?.id,
       userId: contents?.userId,
