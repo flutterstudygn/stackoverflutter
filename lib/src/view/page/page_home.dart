@@ -30,9 +30,7 @@ class HomePage extends StatelessWidget {
           ArticleItemView.builder,
           'articles',
           maxCount: 3,
-          separator: SizedBox(
-            height: 16,
-          ),
+          separator: null,
         ),
         SizedBox(height: 18),
         PanelHeaderView(

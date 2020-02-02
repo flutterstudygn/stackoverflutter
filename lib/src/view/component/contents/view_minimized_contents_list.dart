@@ -53,14 +53,15 @@ class MinimizedContentsList extends StatelessWidget {
           }
 
           List<ContentsItem> items = snapshot.data;
-
           List<Widget> children = List.generate(
             items.length,
             (i) => _itemBuilder(items[i]),
           );
 
-          for (int i = 1; i < children.length; i += 2) {
-            children.insert(i, separator);
+          if (separator != null) {
+            for (int i = 1; i < children.length; i += 2) {
+              children.insert(i, separator);
+            }
           }
 
           return Column(children: children);

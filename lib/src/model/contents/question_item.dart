@@ -22,6 +22,7 @@ class QuestionItem extends ContentsItem {
         );
 
   factory QuestionItem.fromContents(ContentsItem contents) {
+    if (contents == null) return null;
     return QuestionItem(
       id: contents?.id,
       userId: contents?.userId,
