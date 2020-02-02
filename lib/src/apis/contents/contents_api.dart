@@ -37,8 +37,11 @@ class ContentsApi {
     if (collection == null || contentsId?.isNotEmpty != true) return null;
     String baseUrl =
         'https://us-central1-stackoverflutter-78df8.cloudfunctions.net/addViewCount';
-    http.Client().get('$baseUrl?type=$collection&id=$contentsId');
-//    firestore().collection(collection).doc(id).update()
+    http.Client()
+        .get('$baseUrl?type=$collection&id=$contentsId')
+        .catchError((e) {
+      print(e);
+    });
   }
 
   /* Articles */
