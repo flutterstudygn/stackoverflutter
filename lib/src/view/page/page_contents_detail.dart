@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_comment_list_panel.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_contents_userInfo.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_contents_viewer.dart';
-import 'package:stackoverflutter/src/view/component/contents/view_markdown.dart';
 
 class ContentsDetailPage extends StatefulWidget {
   final ContentsType _contentsType;
@@ -78,68 +78,8 @@ class _ContentsDetailPageState extends State<ContentsDetailPage> {
                       passedItem: widget.passedItem,
                     ),
 
-                    Divider(
-                      color: Colors.transparent,
-                      height: 50,
-                    ),
-///////////////////////////////////////////////////
-
-                    Divider(
-                      color: Colors.black,
-                    ),
-
-///////////////////////
-                    ContentsUserInfoView(
-                      widget._contentsType,
-                      passedItem: widget.passedItem,
-                    ),
-
-                    ContentsViewerView(ContentsType.ARTICLE),
-
-                    Divider(
-                      color: Colors.transparent,
-                      height: 20,
-                    ),
-                    Divider(
-                      color: Colors.black38,
-                      height: 1,
-                    ),
-
-                    Divider(
-                      color: Colors.transparent,
-                      height: 50,
-                    ),
-                    Text(
-                      'Your answer',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-
-                    MarkdownView(),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        RaisedButton(
-                          color: Colors.blueAccent,
-                          onPressed: () {
-                            switch (widget._contentsType) {
-                              case ContentsType.ARTICLE:
-//                      api.createArticle(item);
-                                break;
-                              case ContentsType.QUESTION:
-//                      api.createQuestion(item);
-                                break;
-                            }
-                          },
-                          textColor: Colors.white,
-                          child: Text(
-                            'SUBMIT',
-                            style: TextStyle(),
-                          ),
-                        ),
-                      ],
-                    )
+                    SizedBox(height: 50),
+                    CommentListPanel(widget._contentsType, widget.passedItemId),
                   ],
                 ),
               );
