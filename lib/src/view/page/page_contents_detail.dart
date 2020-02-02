@@ -2,32 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
-import 'package:stackoverflutter/src/model/user/user_item.dart';
-import 'package:stackoverflutter/src/view/component/contents/view_contents_bottom_comment.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_contents_userInfo.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_contents_viewer.dart';
 import 'package:stackoverflutter/src/view/component/contents/view_markdown.dart';
-import 'package:stackoverflutter/src/view/component/view_user_profile.dart';
-
 
 class ContentsDetailPage extends StatefulWidget {
-
   final ContentsType _contentsType;
   final String passedItemId;
   final ContentsItem passedItem;
 
   const ContentsDetailPage(
-      this._contentsType, {
-        this.passedItemId,
-        this.passedItem,
-        Key key,
-      }) : super(key: key);
-
+    this._contentsType, {
+    this.passedItemId,
+    this.passedItem,
+    Key key,
+  }) : super(key: key);
 
   static const String routeNameArticle = '/articles/detail';
   static const String routeNameQuestion = '/questions/detail';
-
-
 
   factory ContentsDetailPage.article(String itemId, ContentsItem item) {
     return ContentsDetailPage(ContentsType.ARTICLE,
@@ -49,37 +41,42 @@ class _ContentsDetailPageState extends State<ContentsDetailPage> {
     return Provider<ContentsDetailBloc>(
       create: (ctx) => ContentsDetailBloc(ctx, widget._contentsType)
         ..init(widget.passedItemId, widget.passedItem),
-      dispose: (_,bloc) => bloc.dispose(),
-
-
+      dispose: (_, bloc) => bloc.dispose(),
       child: Consumer<ContentsDetailBloc>(
-        builder: (_,bloc,__){
+        builder: (_, bloc, __) {
           return StreamBuilder<ContentsItem>(
             stream: bloc.item,
-            builder: (_,snapshot){
-             // ContentsItem item =  snapshot.data;
-              return Container(
+            builder: (_, snapshot) {
+              // ContentsItem item =  snapshot.data;
+              return SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
                     Text(widget._contentsType == ContentsType.ARTICLE
                         ? 'Article'
                         : widget._contentsType == ContentsType.QUESTION
-                        ? 'Questions'
-                        : '-'),
+                            ? 'Questions'
+                            : '-'),
                     Text(
                       'Title',
                       style: Theme.of(context).textTheme.title,
                     ),
 
                     ///
-                    ContentsUserInfoView(widget._contentsType, passedItem: widget.passedItem,),
+                    ContentsUserInfoView(
+                      widget._contentsType,
+                      passedItem: widget.passedItem,
+                    ),
 
                     Divider(
                       color: Colors.black,
                     ),
 
 ////////////////////////////contents//////////////Article or Question 받아와야함
-                    ContentsViewerView(widget._contentsType, passedItemId: widget.passedItemId, passedItem: widget.passedItem,),
+                    ContentsViewerView(
+                      widget._contentsType,
+                      passedItemId: widget.passedItemId,
+                      passedItem: widget.passedItem,
+                    ),
 
                     Divider(
                       color: Colors.transparent,
@@ -87,14 +84,15 @@ class _ContentsDetailPageState extends State<ContentsDetailPage> {
                     ),
 ///////////////////////////////////////////////////
 
-                    ContentsBottomCommentView(),
-
                     Divider(
                       color: Colors.black,
                     ),
 
 ///////////////////////
-                    ContentsUserInfoView(widget._contentsType, passedItem: widget.passedItem,),
+                    ContentsUserInfoView(
+                      widget._contentsType,
+                      passedItem: widget.passedItem,
+                    ),
 
                     ContentsViewerView(ContentsType.ARTICLE),
 
@@ -113,7 +111,8 @@ class _ContentsDetailPageState extends State<ContentsDetailPage> {
                     ),
                     Text(
                       'Your answer',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     ),
 
                     MarkdownView(),
