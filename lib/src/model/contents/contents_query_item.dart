@@ -32,6 +32,8 @@ class ContentsQueryItem {
     _queryMap['uid'] = uid;
   }
 
+  String get uid => _queryMap['uid'];
+
   void setSearchKeyword(String keyword) {
     _queryMap['search'] = keyword;
   }

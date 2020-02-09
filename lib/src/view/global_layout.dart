@@ -3,9 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stackoverflutter/src/bloc/home_bloc.dart';
 import 'package:stackoverflutter/src/bloc/session_bloc.dart';
-import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/util/custom_routes.dart';
 import 'package:stackoverflutter/src/util/query_builder.dart';
 import 'package:stackoverflutter/src/util/web_navigator.dart';
@@ -244,7 +242,7 @@ class GlobalLayout extends StatelessWidget {
 
                   return NoTransitionPageRoute(
                     builder: (_) => Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: const EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0.0),
                       child: page,
                     ),
                     settings: settings,
@@ -282,97 +280,9 @@ class GlobalLayout extends StatelessWidget {
                 ),
               ),
             ),
-            if (route != '/')
-              Column(
-                children: <Widget>[
-                  _buildRecentItemList(ContentsType.ARTICLE),
-                  _buildRecentItemList(ContentsType.QUESTION),
-                ],
-              ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildRecentItemList(ContentsType contentsType) {
-    Stream<List<ContentsItem>> stream;
-    String title;
-    String linkPath;
-    switch (contentsType) {
-      case ContentsType.ARTICLE:
-        stream = HomeBloc.instance.articleStream;
-        title = 'Recent articles';
-        linkPath = '${ContentsDetailPage.routeNameArticle}?id=';
-        break;
-      case ContentsType.QUESTION:
-        stream = HomeBloc.instance.questionStream;
-        title = 'Recent questions';
-        linkPath = '${ContentsDetailPage.routeNameQuestion}?id=';
-        break;
-    }
-    return StreamBuilder<List<ContentsItem>>(
-      stream: stream,
-      builder: (ctx, __) {
-        List<ContentsItem> data;
-        switch (contentsType) {
-          case ContentsType.ARTICLE:
-            data = HomeBloc.instance.articles;
-            break;
-          case ContentsType.QUESTION:
-            data = HomeBloc.instance.questions;
-            break;
-        }
-        int length = data?.length ?? 0;
-        if (stream == null || length == 0) return Container();
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                title ?? '',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Column(
-                children: List.generate(
-                  length,
-                  (idx) {
-                    ContentsItem item = data[idx];
-                    return Column(
-                      children: <Widget>[
-                        InkWell(
-                          onTap: item?.id == null
-                              ? null
-                              : () {
-                                  _navigator.currentState
-                                      .pushNamed('$linkPath${item.id}');
-                                },
-                          child: Container(
-                            width: double.infinity,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                item.title ?? '',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Divider(
-                          height: 0,
-                          thickness: 1.0,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

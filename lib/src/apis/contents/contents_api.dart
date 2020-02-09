@@ -1,5 +1,5 @@
 import 'package:firebase/firebase.dart';
-import 'package:firebase/firestore.dart';
+import 'package:firebase/firestore.dart' as fstore;
 import 'package:stackoverflutter/src/model/comments/comment_item.dart';
 import 'package:stackoverflutter/src/model/contents/article_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_item.dart';
@@ -99,11 +99,16 @@ class ContentsApi {
   ///   - [userId] : (optional) [ContentsApi.readArticlesByUser]
   Future<List<ArticleItem>> readArticles(
       {int count = 30, int offset = 0, String userId}) async {
-    CollectionReference ref = firestore().collection('articles');
+    fstore.CollectionReference ref = firestore().collection('articles');
+    fstore.Query query;
     if (userId?.isNotEmpty == true) {
-      ref = ref.where('userId', '==', userId);
+      query = ref.where('userId', '==', userId);
     }
-    return ref.orderBy('createTime', 'desc').limit(count).get().then((v) {
+    return (query ?? ref)
+        .orderBy('createTime', 'desc')
+        .limit(count)
+        .get()
+        .then((v) {
       List<ArticleItem> list = List();
       v.docs.forEach((e) {
         ArticleItem item = ArticleItem.fromJson(e.data());
@@ -182,12 +187,16 @@ class ContentsApi {
   /// return : [List<QuestionItem>]
   Future<List<QuestionItem>> readQuestions(
       {int count = 30, int offset = 0, String userId}) async {
-//    return _readContents(ContentsType.QUESTION, count, offset);
-    CollectionReference ref = firestore().collection('questions');
+    fstore.CollectionReference ref = firestore().collection('questions');
+    fstore.Query query;
     if (userId?.isNotEmpty == true) {
-      ref = ref.where('userId', '==', userId);
+      query = ref.where('userId', '==', userId);
     }
-    return ref.orderBy('createTime', 'desc').limit(count).get().then((v) {
+    return (query ?? ref)
+        .orderBy('createTime', 'desc')
+        .limit(count)
+        .get()
+        .then((v) {
       List<QuestionItem> list = List();
       v.docs.forEach((e) {
         QuestionItem item = QuestionItem.fromJson(e.data());
@@ -224,7 +233,7 @@ class ContentsApi {
         userId?.isNotEmpty != true ||
         currentState == null) return null;
 
-    CollectionReference ref =
+    fstore.CollectionReference ref =
         firestore().collection('$collection/$itemId/likes');
 
     if (currentState == false) {
@@ -242,7 +251,7 @@ class ContentsApi {
   ) async {
     String collection = _getCollection(type);
     if (collection == null) return null;
-    CollectionReference ref =
+    fstore.CollectionReference ref =
         firestore().collection('$collection/$itemId/likes');
     return ref.doc(userId).get().then((v) {
       return v.exists;
@@ -254,7 +263,7 @@ class ContentsApi {
       {int offset = 0, int count = 30, String orderBy = 'createTime'}) {
     String collection = _getCollection(type);
     if (collection == null) return null;
-    CollectionReference ref =
+    fstore.CollectionReference ref =
         firestore().collection('$collection/$itemId/comments');
     if (orderBy == 'createTime') {
       ref.orderBy('createTime', 'asc');
@@ -327,7 +336,7 @@ class ContentsApi {
         userId?.isNotEmpty != true ||
         currentState == null) return null;
 
-    CollectionReference ref =
+    fstore.CollectionReference ref =
         firestore().collection('$collection/$itemId/comments/$commentId/likes');
 
     if (currentState == false) {
@@ -346,7 +355,7 @@ class ContentsApi {
   ) async {
     String collection = _getCollection(type);
     if (collection == null) return null;
-    CollectionReference ref =
+    fstore.CollectionReference ref =
         firestore().collection('$collection/$itemId/comments/$commentId/likes');
     return ref.doc(userId).get().then((v) {
       return v.exists;
