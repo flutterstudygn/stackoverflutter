@@ -7,7 +7,7 @@ import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 import 'package:stackoverflutter/src/model/contents/contents_query_item.dart';
 import 'package:stackoverflutter/src/model/user/user_detail_item.dart';
 import 'package:stackoverflutter/src/model/user/user_item.dart';
-import 'package:stackoverflutter/src/view/component/contents/view_contents_list_limited.dart';
+import 'package:stackoverflutter/src/view/component/contents/view_contents_list_panel.dart';
 import 'package:stackoverflutter/src/view/component/view_user_profile.dart';
 
 const double _activityBarHeight = 50.0;
@@ -42,32 +42,34 @@ class UsersPage extends StatelessWidget {
             dispose: (_, bloc) => bloc.dispose(),
             child: Consumer<UserDetailBloc>(
               builder: (ctx, bloc, _) {
-                return Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: _userCardHeight,
-                      child: _UsersCard(snapshot.data),
-                    ),
-                    SizedBox(height: 18),
-                    StreamBuilder<UserDetailItem>(
-                      stream: bloc.activities,
-                      builder: (context, snapshot) {
-                        return _UserActivity(snapshot.data);
-                      },
-                    ),
-                    SizedBox(height: 18),
-                    LimitedContentsListPanel(
-                      stream: bloc.articles,
-                      query: ContentsQueryItem(uid: snapshot.data.userId),
-                      type: ContentsType.ARTICLE,
-                    ),
-                    SizedBox(height: 18),
-                    LimitedContentsListPanel(
-                      stream: bloc.questions,
-                      query: ContentsQueryItem(uid: snapshot.data.userId),
-                      type: ContentsType.QUESTION,
-                    ),
-                  ],
+                return SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: _userCardHeight,
+                        child: _UsersCard(snapshot.data),
+                      ),
+                      SizedBox(height: 18),
+                      StreamBuilder<UserDetailItem>(
+                        stream: bloc.activities,
+                        builder: (context, snapshot) {
+                          return _UserActivity(snapshot.data);
+                        },
+                      ),
+                      SizedBox(height: 18),
+                      ContentsListPanel(
+                        ContentsType.ARTICLE,
+                        query: ContentsQueryItem(uid: snapshot.data.userId),
+                        maxCount: 3,
+                      ),
+                      SizedBox(height: 18),
+                      ContentsListPanel(
+                        ContentsType.QUESTION,
+                        query: ContentsQueryItem(uid: snapshot.data.userId),
+                        maxCount: 3,
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
