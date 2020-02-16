@@ -8,7 +8,7 @@ import '../../../../src/model/comments/comment_item.dart';
 import '../../../../src/model/contents/contents_item.dart';
 import '../../../../src/view/component/contents/view_comment_list.dart';
 import '../../../../src/view/component/view_panel_header.dart';
-import 'view_markdown.dart';
+import 'view_markdown_editor.dart';
 
 class CommentListPanel extends StatelessWidget {
   final ContentsType _contentsType;

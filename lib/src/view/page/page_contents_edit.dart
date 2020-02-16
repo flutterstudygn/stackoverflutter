@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../src/model/contents/contents_item.dart';
-import '../../../src/view/component/contents/view_markdown.dart';
+import '../../../src/view/component/contents/view_markdown_editor.dart';
 
 class ContentsEditPage extends StatefulWidget {
   final ContentsType _contentsType;

@@ -71,8 +71,15 @@ class MarkdownEditorState extends State<MarkdownEditor>
                   hintText: widget.hintText,
                 ),
               ),
-              MarkdownViewer(
-                text: textEditingController.text,
+              DecoratedBox(
+                decoration: ShapeDecoration(
+                  shape: OutlineInputBorder(),
+                ),
+                child: Markdown(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+                  data: textEditingController.text,
+                ),
               ),
             ],
           ),
@@ -82,23 +89,4 @@ class MarkdownEditorState extends State<MarkdownEditor>
   }
 
   bool validate() => _formFieldKey.currentState.validate();
-}
-
-class MarkdownViewer extends StatelessWidget {
-  final String text;
-
-  const MarkdownViewer({Key key, this.text = ''}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: ShapeDecoration(
-        shape: OutlineInputBorder(),
-      ),
-      child: Markdown(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 20),
-        data: text,
-      ),
-    );
-  }
 }
