@@ -1,37 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:stackoverflutter/src/model/contents/contents_item.dart';
 
-import 'package:provider/provider.dart';
-import 'package:stackoverflutter/src/bloc/contents_detail_bloc.dart';
-import 'package:stackoverflutter/src/model/user/user_item.dart';
-
-
+import '../../../src/model/contents/contents_item.dart';
+import '../../../src/view/component/contents/view_markdown.dart';
 
 class ContentsEditPage extends StatefulWidget {
-
   final ContentsType _contentsType;
   final String passedItemId;
   final ContentsItem passedItem;
 
   const ContentsEditPage(
-      this._contentsType, {
-        this.passedItemId,
-        this.passedItem,
-        Key key,
-      }) : super(key: key);
+    this._contentsType, {
+    this.passedItemId,
+    this.passedItem,
+    Key key,
+  }) : super(key: key);
 
   static const String routeNameArticle = '/articles/edit';
   static const String routeNameQuestion = '/questions/edit';
 
-
   factory ContentsEditPage.article() {
     return ContentsEditPage(ContentsType.ARTICLE);
   }
+
   factory ContentsEditPage.question() {
     return ContentsEditPage(ContentsType.QUESTION);
   }
-
-
 
   @override
   ContentsEditPageState createState() => ContentsEditPageState();
@@ -60,7 +53,11 @@ class ContentsEditPageState extends State<ContentsEditPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(widget._contentsType == ContentsType.ARTICLE ? 'Article' : widget._contentsType == ContentsType.QUESTION ? 'Questions' : '-'),
+          Text(widget._contentsType == ContentsType.ARTICLE
+              ? 'Article'
+              : widget._contentsType == ContentsType.QUESTION
+                  ? 'Questions'
+                  : '-'),
           Padding(
             padding: EdgeInsets.all(8.0),
           ),
@@ -87,15 +84,8 @@ class ContentsEditPageState extends State<ContentsEditPage> {
           ),
           SizedBox(height: 10),
           Expanded(
-            child: TextField(
-              textAlign: TextAlign.left,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              //controller: _textController,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 20),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter contents'),
+            child: MarkdownEditor(
+              hintText: 'Enter contents',
             ),
           ),
           SizedBox(height: 10),
@@ -110,7 +100,7 @@ class ContentsEditPageState extends State<ContentsEditPage> {
           TextField(
             //controller: _textController,
             decoration:
-            InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
+                InputDecoration(border: OutlineInputBorder(), hintText: 'Tags'),
           ),
           SizedBox(height: 10),
           Row(
@@ -119,7 +109,7 @@ class ContentsEditPageState extends State<ContentsEditPage> {
               RaisedButton(
                 color: Colors.blueAccent,
                 onPressed: () {
-                  switch(widget._contentsType) {
+                  switch (widget._contentsType) {
                     case ContentsType.ARTICLE:
 //                      api.createArticle(item);
                       break;
