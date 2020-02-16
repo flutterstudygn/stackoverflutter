@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:stackoverflutter/src/bloc/comment_list_bloc.dart';
-import 'package:stackoverflutter/src/bloc/session_bloc.dart';
-import 'package:stackoverflutter/src/model/comments/comment_item.dart';
-import 'package:stackoverflutter/src/model/contents/contents_item.dart';
-import 'package:stackoverflutter/src/view/component/contents/view_comment_list.dart';
-import 'package:stackoverflutter/src/view/component/contents/view_markdown.dart';
-import 'package:stackoverflutter/src/view/component/view_panel_header.dart';
+
+import '../../../../src/bloc/comment_list_bloc.dart';
+import '../../../../src/bloc/session_bloc.dart';
+import '../../../../src/model/comments/comment_item.dart';
+import '../../../../src/model/contents/contents_item.dart';
+import '../../../../src/view/component/contents/view_comment_list.dart';
+import '../../../../src/view/component/view_panel_header.dart';
+import 'view_markdown.dart';
 
 class CommentListPanel extends StatelessWidget {
   final ContentsType _contentsType;
   final String _contentsId;
+
   CommentListPanel(this._contentsType, this._contentsId);
 
   @override
@@ -34,7 +37,10 @@ class CommentListPanel extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 6.0),
-              CommentEditor(_contentsId, _contentsType),
+              SizedBox(
+                height: kToolbarHeight * 4,
+                child: CommentEditor(_contentsId, _contentsType),
+              ),
             ],
           );
         },
@@ -129,39 +135,28 @@ class CommentEditor extends StatefulWidget {
 }
 
 class _CommentEditorState extends State<CommentEditor> {
-  final TextEditingController _textController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _textController.addListener(() {
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(CommentEditor oldWidget) {
-    super.didUpdateWidget(oldWidget);
-  }
+  final GlobalKey<MarkdownEditorState> _markdownKey = GlobalKey();
+  TextEditingController markdownController;
 
   @override
   Widget build(BuildContext context) {
+    SchedulerBinding.instance.addPostFrameCallback((_) =>
+        markdownController = _markdownKey.currentState.textEditingController);
+
     bool _isSignedIn = Provider.of<SessionBloc>(context, listen: false)
             .currentUser
             ?.userId
             ?.isNotEmpty ==
         true;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        MarkdownView(
-          controller: _textController,
-          hintText: _isSignedIn ? 'Enter contents' : 'Please sign in first.',
+        Expanded(
+          child: MarkdownEditor(
+            key: _markdownKey,
+            hintText: _isSignedIn ? 'Enter contents' : 'Please sign in first.',
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -173,9 +168,11 @@ class _CommentEditorState extends State<CommentEditor> {
                 'SUBMIT',
                 style: TextStyle(),
               ),
-              onPressed: _isSignedIn && _textController.text?.isNotEmpty == true
+              onPressed: _isSignedIn
                   ? () {
-                      String comment = _textController.text;
+                      if (!_markdownKey.currentState.validate()) return;
+
+                      String comment = markdownController.text;
                       String userId =
                           Provider.of<SessionBloc>(context, listen: false)
                               .currentUser
@@ -186,7 +183,7 @@ class _CommentEditorState extends State<CommentEditor> {
                           .writeComment(commentItem)
                           .then((result) {
                         if (result != null) {
-                          _textController.clear();
+                          markdownController.clear();
                         }
                       });
                     }
